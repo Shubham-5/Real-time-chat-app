@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 // import { IoSend, IoDocuments } from 'react-icons/io5';
 import { HiChat } from 'react-icons/hi';
+import { FaPaperPlane } from 'react-icons/fa';
 import { MdAccountCircle } from 'react-icons/md';
 
 import ChatBubble from './ChatBubble';
@@ -84,7 +85,7 @@ const Chat = ({ onChatHistoryOpen, onChatFilesOpen }) => {
           colorScheme="blue"
           aria-label="Send message"
           variant="ghost"
-          // icon={<IoSend />}
+          icon={<FaPaperPlane />}
         />
       </Flex>
     </Flex>

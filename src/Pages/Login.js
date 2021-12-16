@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import {
   Flex,
   HStack,
-  IconButton,
-  Avatar,
-  AvatarBadge,
   Heading,
   Box,
   Divider,
@@ -19,14 +16,15 @@ import {
   InputRightElement,
   Text,
 } from '@chakra-ui/react';
+
+import { FaEye, FaEyeSlash, FaSignInAlt } from 'react-icons/fa';
 import { auth } from '../firebase/Firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-// import { useNavigate } from 'react-router-dom';
 
-const Login = ({ setUser }) => {
+const Login = ({ user, setUser }) => {
   const [isSignIn, setIsSignIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,15 +32,15 @@ const Login = ({ setUser }) => {
   const [password, setPassword] = useState('');
 
   const toast = useToast();
-  // const navigate = useNavigate();
 
+  //handling login function
   const handleSubmitLogin = async e => {
     e.preventDefault();
     setIsLoading(true);
 
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        setUser(true);
+      .then(items => {
+        setUser(items);
       })
       .catch(error => {
         toast({
@@ -60,13 +58,14 @@ const Login = ({ setUser }) => {
       });
   };
 
+  //handling Register function
   const handleSubmitRegister = async e => {
     e.preventDefault();
     setIsLoading(true);
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        setUser(true);
+      .then(user => {
+        setUser(user);
         toast({
           description: 'SUCCESS: Created Account',
           status: 'success',
@@ -91,13 +90,20 @@ const Login = ({ setUser }) => {
       });
   };
 
+  //handling password visibility && signin text
+
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
   const handleSignIn = () => setIsSignIn(!isSignIn);
 
   return (
-    <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
+    <Flex
+      flexDirection="column"
+      alignItems="center"
+      height="100vh"
+      width="100vw"
+    >
       <HStack justify="center" w="full" px={8} mb={8}>
-        <Heading size="lg" pt="20px" color="gray">
+        <Heading size="lg" mt="20px" color="gray">
           {isSignIn ? 'LOGIN' : 'REGISTER'}
         </Heading>
       </HStack>
@@ -108,6 +114,8 @@ const Login = ({ setUser }) => {
       <VStack spacing={6} overflowY="auto" w="md">
         <VStack px={8} w="full" mt={6} justifyContent="space-between">
           <Box my={50} textAlign="left">
+            {/* ----- Login Form Start here ---- */}
+
             {isSignIn && (
               <form onSubmit={handleSubmitLogin}>
                 <FormControl isRequired>
@@ -140,7 +148,7 @@ const Login = ({ setUser }) => {
                         size="sm"
                         onClick={handlePasswordVisibility}
                       >
-                        {/* {showPassword ? <ViewIcon /> : <ViewOffIcon />} */}
+                        {showPassword ? <FaEye /> : <FaEyeSlash />}
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -165,6 +173,8 @@ const Login = ({ setUser }) => {
                 </Button>
               </form>
             )}
+
+            {/* ----- Register Form Start here ---- */}
 
             {!isSignIn && (
               <form onSubmit={handleSubmitRegister}>
@@ -198,7 +208,7 @@ const Login = ({ setUser }) => {
                         size="sm"
                         onClick={handlePasswordVisibility}
                       >
-                        {/* {showPassword ? <ViewIcon /> : <ViewOffIcon />} */}
+                        {showPassword ? <FaEye /> : <FaEyeSlash />}
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -218,18 +228,22 @@ const Login = ({ setUser }) => {
                       color="teal"
                     />
                   ) : (
-                    'Sign UP'
+                    ' Sign UP  '
                   )}
+
+                  <FaSignInAlt />
                 </Button>
               </form>
             )}
           </Box>
         </VStack>
 
+        {/* ------- form end up here ----- */}
+
         <Box px={8} w="full">
           <Divider mt={6} color="gray.100" />
         </Box>
-        <HStack px={8} w="full" mt={6} justifyContent="space-between">
+        <HStack px={20} w="full" mt={6} justifyContent="space-between">
           <Text size="sm" fontSize="15px    ">
             {isSignIn ? "Haven't Created Account ?" : 'Already Have Account ?'}
           </Text>
@@ -244,8 +258,9 @@ const Login = ({ setUser }) => {
           </Button>
         </HStack>
       </VStack>
+
       <Box px={8} w="full">
-        <Divider mt={6} color="gray.100" />
+        <Divider color="gray.100" />
       </Box>
     </Flex>
   );

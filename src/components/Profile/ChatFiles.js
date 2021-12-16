@@ -11,8 +11,9 @@ import {
   VStack,
   Button,
 } from '@chakra-ui/react';
-
 import { RiDribbbleLine, RiInstagramLine, RiTwitterFill } from 'react-icons/ri';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase/Firebase';
 
 const ChatFiles = () => {
   return (
@@ -61,7 +62,13 @@ const ChatFiles = () => {
       <VStack spacing={6} overflowY="auto" w="full">
         <HStack px={8} w="full" mt={6} justifyContent="space-between">
           <Heading size="md">Account</Heading>
-          <Button fontWeight="Bold" variant="text" size="xs" color="blue">
+          <Button
+            fontWeight="Bold"
+            variant="text"
+            size="xs"
+            color="blue"
+            onClick={() => signOut(auth)}
+          >
             Log Out
           </Button>
         </HStack>
