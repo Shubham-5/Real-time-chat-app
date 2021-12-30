@@ -11,11 +11,13 @@ import {
   VStack,
   Button,
 } from '@chakra-ui/react';
-import { RiDribbbleLine, RiInstagramLine, RiTwitterFill } from 'react-icons/ri';
+
 import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase/Firebase';
+import { updateDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../../firebase/Firebase';
 
 const ChatFiles = () => {
+  console.log(auth.currentUser);
   return (
     <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
       <HStack justify="center" w="full" px={8} mb={8}>
@@ -28,35 +30,10 @@ const ChatFiles = () => {
       </Button>
 
       <Heading size="md" mt={3}>
-        Shubham Rajput
+        {auth.currentUser.name}
       </Heading>
-      <HStack px={8} justifyContent="center" spacing={3} mt={6}>
-        <IconButton
-          icon={<RiDribbbleLine />}
-          variant="ghost"
-          rounded="full"
-          color="gray.500"
-          h={10}
-          aria-label="Dribbble Account"
-        />
-        <IconButton
-          icon={<RiInstagramLine />}
-          variant="ghost"
-          rounded="full"
-          color="gray.500"
-          h={10}
-          aria-label="Instagram Account"
-        />
-        <IconButton
-          icon={<RiTwitterFill />}
-          variant="ghost"
-          rounded="full"
-          color="gray.500"
-          h={10}
-          aria-label="Twitter Account"
-        />
-      </HStack>
-      <Box px={8} w="full">
+
+      <Box px={8} py={20} w="full">
         <Divider mt={6} color="gray.100" />
       </Box>
       <VStack spacing={6} overflowY="auto" w="full">
@@ -67,7 +44,12 @@ const ChatFiles = () => {
             variant="text"
             size="xs"
             color="blue"
-            onClick={() => signOut(auth)}
+            onClick={async () => {
+              await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+                isOnline: false,
+              });
+              await signOut(auth);
+            }}
           >
             Log Out
           </Button>

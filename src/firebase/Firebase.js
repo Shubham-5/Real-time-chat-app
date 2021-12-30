@@ -1,13 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: 'AIzaSyDu6RAo2PxnSItC61UIH0CGGZ_26HSRDpg',
   authDomain: 'realtime-chat-app-12dab.firebaseapp.com',
+  databaseURL: 'https://realtime-chat-app-12dab-default-rtdb.firebaseio.com/',
   projectId: 'realtime-chat-app-12dab',
   storageBucket: 'realtime-chat-app-12dab.appspot.com',
   messagingSenderId: '284964247975',
@@ -17,5 +17,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-export { auth };
+export { auth, db, storage };

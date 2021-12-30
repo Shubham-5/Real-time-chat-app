@@ -17,15 +17,17 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { FaEye, FaEyeSlash, FaSignInAlt } from 'react-icons/fa';
-import { auth } from '../firebase/Firebase';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { auth, db } from '../firebase/Firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import { updateDoc, doc, setDoc, Timestamp } from 'firebase/firestore';
 
 const Login = ({ user, setUser }) => {
   const [isSignIn, setIsSignIn] = useState(false);
+  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -38,24 +40,28 @@ const Login = ({ user, setUser }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(items => {
-        setUser(items);
-      })
-      .catch(error => {
-        toast({
-          description: error.message,
-          status: 'error',
-          duration: 9000,
-          isClosable: true,
-          position: 'top',
-        });
-      })
-      .finally(() => {
-        setEmail('');
-        setPassword('');
-        setIsLoading(false);
+    try {
+      //storing user signin info to result
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      //creating db of user
+      await updateDoc(doc(db, 'users', result.user.uid), {
+        isOnline: true,
       });
+      setUser(result);
+      //setting input form empty
+    } catch (error) {
+      toast({
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      });
+    } finally {
+      setEmail('');
+      setPassword('');
+      setIsLoading(false);
+    }
   };
 
   //handling Register function
@@ -63,31 +69,34 @@ const Login = ({ user, setUser }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(user => {
-        setUser(user);
-        toast({
-          description: 'SUCCESS: Created Account',
-          status: 'success',
-          duration: 9000,
-          isClosable: true,
-          position: 'top',
-        });
-      })
-      .catch(error => {
-        toast({
-          description: error.message,
-          status: 'error',
-          duration: 9000,
-          isClosable: true,
-          position: 'top',
-        });
-      })
-      .finally(() => {
-        setEmail('');
-        setPassword('');
-        setIsLoading(false);
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const data = setDoc(doc(db, 'users', result.user.uid), {
+        uid: result.user.uid,
+        name,
+        email,
+        createdAt: Timestamp.fromDate(new Date()),
+        isOnline: true,
       });
+      console.log(data);
+      setUser(result);
+    } catch (error) {
+      toast({
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      });
+    } finally {
+      setEmail('');
+      setPassword('');
+      setIsLoading(false);
+    }
   };
 
   //handling password visibility && signin text
@@ -103,13 +112,13 @@ const Login = ({ user, setUser }) => {
       width="100vw"
     >
       <HStack justify="center" w="full" px={8} mb={8}>
-        <Heading size="lg" mt="20px" color="gray">
+        <Heading size="lg" mt="20" color="gray">
           {isSignIn ? 'LOGIN' : 'REGISTER'}
         </Heading>
       </HStack>
 
       <Box px={8} w="full">
-        <Divider mt={6} color="gray.100" />
+        <Divider mt="12" color="gray.100" />
       </Box>
       <VStack spacing={6} overflowY="auto" w="md">
         <VStack px={8} w="full" mt={6} justifyContent="space-between">
@@ -178,6 +187,17 @@ const Login = ({ user, setUser }) => {
 
             {!isSignIn && (
               <form onSubmit={handleSubmitRegister}>
+                <FormControl isRequired mb={5}>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    type="text"
+                    name="name"
+                    value={name}
+                    size="lg"
+                    placeholder="enter your name."
+                    onChange={e => setName(e.target.value)}
+                  />
+                </FormControl>
                 <FormControl isRequired>
                   <FormLabel>Email</FormLabel>
                   <Input
@@ -189,7 +209,7 @@ const Login = ({ user, setUser }) => {
                     onChange={e => setEmail(e.target.value)}
                   />
                 </FormControl>
-                <FormControl isRequired mb={5} mt={5}>
+                <FormControl isRequired mt={5}>
                   <FormLabel>Password</FormLabel>
                   <InputGroup>
                     <Input
@@ -217,7 +237,7 @@ const Login = ({ user, setUser }) => {
                   width="full"
                   mt={4}
                   size="lg"
-                  variantColor="teal"
+                  variantcolor="teal"
                   variant="outline"
                   type="submit"
                 >
@@ -230,8 +250,6 @@ const Login = ({ user, setUser }) => {
                   ) : (
                     ' Sign UP  '
                   )}
-
-                  <FaSignInAlt />
                 </Button>
               </form>
             )}
@@ -241,9 +259,9 @@ const Login = ({ user, setUser }) => {
         {/* ------- form end up here ----- */}
 
         <Box px={8} w="full">
-          <Divider mt={6} color="gray.100" />
+          <Divider color="gray.100" />
         </Box>
-        <HStack px={20} w="full" mt={6} justifyContent="space-between">
+        <HStack px={20} w="full" justifyContent="space-between">
           <Text size="sm" fontSize="15px    ">
             {isSignIn ? "Haven't Created Account ?" : 'Already Have Account ?'}
           </Text>

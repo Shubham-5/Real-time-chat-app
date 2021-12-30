@@ -1,34 +1,41 @@
+import React, { useState, useEffect } from 'react';
 import {
   VStack,
-  Flex,
-  Avatar,
-  AvatarBadge,
   Heading,
   HStack,
-  IconButton,
   Box,
   Divider,
   Text,
   List,
   ListItem,
 } from '@chakra-ui/react';
-import { RiDribbbleLine, RiInstagramLine, RiTwitterFill } from 'react-icons/ri';
+import { auth, db } from '../../firebase/Firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+
 import ChatRow from './ChatRow';
 import UserAvatar from './UserAvatar';
 
-const onlineFriends = [
-  'Lazar Nikolov',
-  'Mark Chandler',
-  'Segun Adebayo',
-  'Tim Kolberger',
-  'Folasade Agbaje',
-  'Alex Gerrit',
-  'Jason Hughes',
-  'Jonathan Bakebwa',
-  'Tioluwani Kolawole',
-];
-
 const ChatHistorySidebar = () => {
+  const [onlineFriends, setOnlineFriends] = useState([]);
+
+  useEffect(() => {
+    const userRef = collection(db, 'users');
+    //query object
+    const q = query(userRef, where('uid', 'not-in', [auth.currentUser.uid]));
+    //execute query
+    const unsubscribe = onSnapshot(q, querySnap => {
+      let users = [];
+      querySnap.forEach(doc => {
+        users.push(doc.data());
+      });
+
+      setOnlineFriends(users);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <VStack h="full" alignItems="center" w="full" spacing={6}>
       <HStack px={8} w="full" justifyContent="space-between">
@@ -46,7 +53,7 @@ const ChatHistorySidebar = () => {
         spacing={3}
       >
         {onlineFriends.map(friend => (
-          <UserAvatar name={friend} key={friend} />
+          <UserAvatar name={friend.name} key={friend.uid} />
         ))}
       </HStack>
       <Box px={8} w="full">
