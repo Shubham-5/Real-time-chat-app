@@ -7,7 +7,7 @@ import {
   StatLabel,
   StatNumber,
 } from '@chakra-ui/react';
-// import { IoSend, IoDocuments } from 'react-icons/io5';
+
 import { HiChat } from 'react-icons/hi';
 import { FaPaperPlane } from 'react-icons/fa';
 import { MdAccountCircle } from 'react-icons/md';
@@ -20,34 +20,9 @@ const messages = [
     from: 'others',
     dateSent: '20:21',
   },
-  {
-    message: 'Sure! At 11:00 am?',
-    from: 'me',
-    dateSent: '20:22',
-  },
-  {
-    message: "That's too early! How about at noon?",
-    from: 'others',
-    dateSent: '20:22',
-  },
-  {
-    message: 'That sounds good as well. Where should we meet?',
-    from: 'me',
-    dateSent: '20:23',
-  },
-  {
-    message: 'Meet me at the hardware store on 21 Duck Street.',
-    from: 'others',
-    dateSent: '20:23',
-  },
-  {
-    message: 'Sounds good.',
-    from: 'me',
-    dateSent: '20:24',
-  },
 ];
 
-const Chat = ({ onChatHistoryOpen, onChatFilesOpen }) => {
+const Chat = ({ onChatHistoryOpen, onChatFilesOpen, chat }) => {
   return (
     <Flex w="full" flexDirection="column">
       <HStack px={4} py={4} borderBottomColor="gray.100" borderBottomWidth={1}>
@@ -68,7 +43,7 @@ const Chat = ({ onChatHistoryOpen, onChatFilesOpen }) => {
       <Flex px={6} overflowY="auto" flexDirection="column" flex={1}>
         <Stat mt={6}>
           <StatLabel color="gray.500">Chatting with</StatLabel>
-          <StatNumber>Mark Zuckerburg</StatNumber>
+          <StatNumber>{chat.name}</StatNumber>
         </Stat>
         {messages.map(({ message, from, dateSent }, index) => (
           <ChatBubble

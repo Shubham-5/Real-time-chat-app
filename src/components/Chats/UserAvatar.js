@@ -1,13 +1,16 @@
-import { Avatar, AvatarBadge, Tooltip } from '@chakra-ui/react';
+import { Avatar, AvatarBadge } from '@chakra-ui/react';
 
-const UserAvatar = ({ name }) => {
+const UserAvatar = ({ name, status }) => {
   return (
-    <Tooltip label={name}>
+    <>
       <Avatar name={name}>
-        {/* green dot for online */}
-        <AvatarBadge boxSize={4} bg="green.500" />
+        {status ? (
+          <AvatarBadge boxSize="1em" bg="green.500" />
+        ) : (
+          <AvatarBadge boxSize="1em" bg="red.500" />
+        )}
       </Avatar>
-    </Tooltip>
+    </>
   );
 };
 

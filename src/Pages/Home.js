@@ -1,14 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import ChatHistorySidebar from '../components/Chats/ChatHistorySidebar';
 import Chat from '../components/Messenger/Chat';
 import ChatFiles from '../components/Profile/ChatFiles';
 import ChatHistoryDrawer from '../components/Chats/ChatHistoryDrawer';
 import ChatFilesDrawer from '../components/Profile/ChatFilesDrawer';
-
 import { HStack, Flex, useDisclosure } from '@chakra-ui/react';
+import { auth, db } from '../firebase/Firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 
-const Home = ({ user, setUser }) => {
+const Home = () => {
+  const [onlineFriends, setOnlineFriends] = useState([]);
+  const [chat, setChat] = useState('');
+
+  useEffect(() => {
+    const userRef = collection(db, 'users');
+    //query object
+    const q = query(userRef, where('uid', 'not-in', [auth.currentUser.uid]));
+    //execute query
+    const unsubscribe = onSnapshot(q, querySnap => {
+      let users = [];
+      querySnap.forEach(doc => {
+        users.push(doc.data());
+      });
+
+      setOnlineFriends(users);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const selectFriend = async friend => {
+    setChat(friend);
+  };
+
   const {
     isOpen: isChatHistoryOpen,
     onOpen: onChatHistoryOpen,
@@ -24,9 +50,9 @@ const Home = ({ user, setUser }) => {
   return (
     <>
       <HStack h="100vh" spacing={0}>
-        <Flex as="nav" h="full" maxW={16} w="full" bg="gray.100">
+        {/* <Flex as="nav" h="full" maxW={16} w="full" bg="gray.100">
           <Navigation />
-        </Flex>
+        </Flex> */}
 
         <Flex
           as="aside"
@@ -38,7 +64,10 @@ const Home = ({ user, setUser }) => {
           borderRightWidth={1}
           pt={8}
         >
-          <ChatHistorySidebar />
+          <ChatHistorySidebar
+            onlineFriends={onlineFriends}
+            selectFriend={selectFriend}
+          />
         </Flex>
         <Flex
           as="main"
@@ -50,6 +79,7 @@ const Home = ({ user, setUser }) => {
           <Chat
             onChatHistoryOpen={onChatHistoryOpen}
             onChatFilesOpen={onChatFilesOpen}
+            chat={chat}
           />
         </Flex>
         <Flex

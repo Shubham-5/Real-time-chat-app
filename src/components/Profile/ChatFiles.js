@@ -17,7 +17,6 @@ import { updateDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
 
 const ChatFiles = () => {
-  console.log(auth.currentUser);
   return (
     <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
       <HStack justify="center" w="full" px={8} mb={8}>
@@ -29,9 +28,7 @@ const ChatFiles = () => {
         </Avatar>
       </Button>
 
-      <Heading size="md" mt={3}>
-        {auth.currentUser.name}
-      </Heading>
+      <Heading size="md" mt={3}></Heading>
 
       <Box px={8} py={20} w="full">
         <Divider mt={6} color="gray.100" />

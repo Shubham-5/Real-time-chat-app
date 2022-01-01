@@ -10,25 +10,19 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(auth, currentUser => {
+    const unsubscribe = onAuthStateChanged(auth, currentUser => {
       setUser(currentUser ? currentUser : null);
-
       setLoading(false);
+      return () => {
+        unsubscribe();
+      };
     });
   }, []);
 
   if (loading) {
     return 'Loading';
   }
-  return (
-    <>
-      {user ? (
-        <Home user={user} setUser={setUser} />
-      ) : (
-        <Login setUser={setUser} />
-      )}
-    </>
-  );
+  return <>{user ? <Home /> : <Login setUser={setUser} />}</>;
 }
 
 export default App;

@@ -9,10 +9,6 @@ const Navigation = () => {
     <VStack p={6} justifyContent="space-between" alignItems="center" w="full">
       <VStack>
         <ChakraLogo mb={6} />
-
-        
-
-     
       </VStack>
       <Tooltip label="Logout" placement="right">
         <IconButton color="gray.700" icon={<HiLogout />} aria-label="Logout" />
