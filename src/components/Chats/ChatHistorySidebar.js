@@ -14,7 +14,7 @@ import ChatRow from './ChatRow';
 
 const ChatHistorySidebar = ({ onlineFriends, selectFriend }) => {
   return (
-    <VStack h="full" alignItems="center" w="full" spacing={6}>
+    <VStack h="full" alignItems="center" w="full" mt="20px" spacing={6}>
       <HStack px={8} w="full" justifyContent="space-between">
         <Heading size="xs">Friends </Heading>
         <Text fontSize="sm" color="gray.500" fontWeight="semibold">
@@ -33,14 +33,15 @@ const ChatHistorySidebar = ({ onlineFriends, selectFriend }) => {
       <Box w="full" overflowY="auto">
         <List w="full" spacing={0}>
           <ListItem>
-            {onlineFriends.map(friend => (
-              <ChatRow
-                name={friend.name}
-                friend={friend}
-                selectFriend={selectFriend}
-                key={friend.uid}
-              />
-            ))}
+            {onlineFriends &&
+              onlineFriends.map(friend => (
+                <ChatRow
+                  name={friend.name}
+                  friend={friend}
+                  selectFriend={selectFriend}
+                  key={friend.uid}
+                />
+              ))}
           </ListItem>
         </List>
       </Box>

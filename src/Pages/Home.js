@@ -94,6 +94,8 @@ const Home = () => {
         <ChatHistoryDrawer
           isOpen={isChatHistoryOpen}
           onClose={onChatHistoryClose}
+          onlineFriends={onlineFriends}
+          selectFriend={selectFriend}
         />
         <ChatFilesDrawer isOpen={isChatFilesOpen} onClose={onChatFilesClose} />
       </HStack>
