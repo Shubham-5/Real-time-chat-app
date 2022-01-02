@@ -1,7 +1,7 @@
-import { Box, Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { Flex, Heading, Text, VStack } from '@chakra-ui/react';
 import UserAvatar from './UserAvatar';
 
-const ChatRow = ({ name, selectFriend, friend }) => {
+const ChatRow = ({ selectFriend, friend }) => {
   return (
     <Flex
       py={4}
@@ -14,7 +14,7 @@ const ChatRow = ({ name, selectFriend, friend }) => {
       _hover={{ bg: 'gray.50', cursor: 'pointer' }}
       onClick={() => selectFriend(friend)}
     >
-      <UserAvatar name={name} />
+      <UserAvatar name={friend.name} friend={friend} />
       <VStack
         overflow="hidden"
         flex={1}
@@ -23,7 +23,7 @@ const ChatRow = ({ name, selectFriend, friend }) => {
         alignItems="flex-start"
       >
         <Heading fontSize={12} w="full">
-          {name}
+          {friend.name}
         </Heading>
         <Text
           overflow="hidden"

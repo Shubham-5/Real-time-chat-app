@@ -1,8 +1,9 @@
+import React, { useEffect, useState } from 'react';
+
 import {
   Flex,
   HStack,
   Text,
-  IconButton,
   Avatar,
   AvatarBadge,
   Heading,
@@ -13,14 +14,41 @@ import {
 } from '@chakra-ui/react';
 
 import { signOut } from 'firebase/auth';
-import { updateDoc, doc } from 'firebase/firestore';
+import {
+  updateDoc,
+  doc,
+  query,
+  onSnapshot,
+  collection,
+  where,
+} from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
 
 const ChatFiles = () => {
+  const [isMe, setIsMe] = useState('');
+  useEffect(() => {
+    const userRef = collection(db, 'users');
+    //query object
+    const q = query(userRef, where('uid', '==', auth.currentUser.uid));
+
+    //execute query
+    const unsubscribe = onSnapshot(q, querySnap => {
+      let user = [];
+      querySnap.forEach(doc => {
+        user.push(doc.data());
+      });
+
+      setIsMe(user);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
       <HStack justify="center" w="full" px={8} mb={8}>
-        <Text color="gray.500">20 March 2021</Text>
+        <Text color="gray.500"></Text>
       </HStack>
       <Button rounded="full" width="2px" p={20}>
         <Avatar size="2xl" name="Dina Harrison">
@@ -28,9 +56,11 @@ const ChatFiles = () => {
         </Avatar>
       </Button>
 
-      <Heading size="md" mt={3}></Heading>
+      <Heading size="md" mt={5}>
+        {isMe && isMe[0].name}
+      </Heading>
 
-      <Box px={8} py={20} w="full">
+      <Box px={8} w="full">
         <Divider mt={6} color="gray.100" />
       </Box>
       <VStack spacing={6} overflowY="auto" w="full">

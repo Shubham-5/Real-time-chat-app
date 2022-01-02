@@ -7,16 +7,29 @@ import ChatHistoryDrawer from '../components/Chats/ChatHistoryDrawer';
 import ChatFilesDrawer from '../components/Profile/ChatFilesDrawer';
 import { HStack, Flex, useDisclosure } from '@chakra-ui/react';
 import { auth, db } from '../firebase/Firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+  addDoc,
+  setDoc,
+  Timestamp,
+} from 'firebase/firestore';
 
 const Home = () => {
   const [onlineFriends, setOnlineFriends] = useState([]);
   const [chat, setChat] = useState('');
+  const [text, setText] = useState('');
+  const [messages, setMessages] = useState([]);
+
+  const isMe = auth.currentUser.uid;
 
   useEffect(() => {
     const userRef = collection(db, 'users');
     //query object
-    const q = query(userRef, where('uid', 'not-in', [auth.currentUser.uid]));
+    const q = query(userRef, where('uid', 'not-in', [isMe]));
     //execute query
     const unsubscribe = onSnapshot(q, querySnap => {
       let users = [];
@@ -33,6 +46,33 @@ const Home = () => {
 
   const selectFriend = async friend => {
     setChat(friend);
+    const isFrom = friend.uid;
+
+    const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
+    const msgsRef = collection(db, 'messages', id, 'chat');
+    const q = query(msgsRef, orderBy('dateSent', 'asc'));
+
+    onSnapshot(q, querySnapshot => {
+      let msgs = [];
+      querySnapshot.forEach(doc => {
+        msgs.push(doc.data());
+      });
+      setMessages(msgs);
+    });
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const isFrom = chat.uid;
+    const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
+    await addDoc(collection(db, 'messages', id, 'chat'), {
+      text,
+      from: isMe,
+      to: isFrom,
+      dateSent: Timestamp.fromDate(new Date()),
+    });
+
+    setText('');
   };
 
   const {
@@ -80,6 +120,10 @@ const Home = () => {
             onChatHistoryOpen={onChatHistoryOpen}
             onChatFilesOpen={onChatFilesOpen}
             chat={chat}
+            handleSubmit={handleSubmit}
+            setText={setText}
+            text={text}
+            messages={messages}
           />
         </Flex>
         <Flex

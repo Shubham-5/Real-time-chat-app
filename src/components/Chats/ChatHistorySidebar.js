@@ -36,7 +36,6 @@ const ChatHistorySidebar = ({ onlineFriends, selectFriend }) => {
             {onlineFriends &&
               onlineFriends.map(friend => (
                 <ChatRow
-                  name={friend.name}
                   friend={friend}
                   selectFriend={selectFriend}
                   key={friend.uid}
