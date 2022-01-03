@@ -11,6 +11,7 @@ import {
   Divider,
   VStack,
   Button,
+  useColorMode,
 } from '@chakra-ui/react';
 
 import { signOut } from 'firebase/auth';
@@ -25,6 +26,7 @@ import {
 import { auth, db } from '../../firebase/Firebase';
 
 const ChatFiles = () => {
+  const { toggleColorMode } = useColorMode();
   const [isMe, setIsMe] = useState('');
   useEffect(() => {
     const userRef = collection(db, 'users');
@@ -68,20 +70,36 @@ const ChatFiles = () => {
           <Heading size="md">Account</Heading>
           <Button
             fontWeight="Bold"
-            variant="text"
-            size="xs"
+            variant="outline"
+            size="sm"
             color="blue"
             onClick={async () => {
+              await signOut(auth);
               await updateDoc(doc(db, 'users', auth.currentUser.uid), {
                 isOnline: false,
               });
-              await signOut(auth);
             }}
           >
             Log Out
           </Button>
         </HStack>
 
+        <HStack px={8} w="full" mt={6} justifyContent="space-between">
+          <Heading size="md ">Dark mode</Heading>
+          <Button
+            fontWeight="Bold"
+            variant="outline"
+            size="sm"
+            color="blue"
+            fontWeight="Bold"
+            variant="outline"
+            size="sm"
+            color="blue"
+            onClick={toggleColorMode}
+          >
+            Click
+          </Button>
+        </HStack>
         <Box px={8} w="full">
           <Divider mt={6} color="gray.100" />
         </Box>

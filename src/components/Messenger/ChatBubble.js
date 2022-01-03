@@ -17,6 +17,7 @@ const ChatBubble = ({ message }) => {
     <VStack mt={6} alignItems={alignment} alignSelf={alignment}>
       <Box
         bg={isMe ? 'blue.50' : 'gray.100'}
+        // color="gray"
         px={6}
         py={4}
         maxW={80}

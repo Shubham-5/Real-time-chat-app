@@ -4,12 +4,21 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
-import { ChakraProvider, theme } from '@chakra-ui/react';
+import { ChakraProvider, theme, extendTheme } from '@chakra-ui/react';
 
+const customTheme = extendTheme({
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+  colors: {
+    primary: theme.colors.white,
+  },
+});
 ReactDOM.render(
   <StrictMode>
-    <ColorModeScript />
-    <ChakraProvider theme={theme}>
+    <ChakraProvider theme={customTheme}>
+      <ColorModeScript initialColorMode={customTheme.config.initialColorMode} />
       <App />
     </ChakraProvider>
   </StrictMode>,

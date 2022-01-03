@@ -75,14 +75,14 @@ const Login = ({ user, setUser }) => {
         email,
         password
       );
-      const data = setDoc(doc(db, 'users', result.user.uid), {
+      setDoc(doc(db, 'users', result.user.uid), {
         uid: result.user.uid,
         name,
         email,
         createdAt: Timestamp.fromDate(new Date()),
         isOnline: true,
       });
-      console.log(data);
+
       setUser(result);
     } catch (error) {
       toast({
@@ -111,7 +111,7 @@ const Login = ({ user, setUser }) => {
       height="100vh"
       width="100vw"
     >
-      <HStack justify="center" w="full" px={8} mb={8}>
+      <HStack justify="center" w="full" px={8}>
         <Heading size="lg" mt="20" color="gray">
           {isSignIn ? 'LOGIN' : 'REGISTER'}
         </Heading>
@@ -166,8 +166,8 @@ const Login = ({ user, setUser }) => {
                   width="full"
                   mt={4}
                   size="lg"
-                  variantColor="teal"
-                  variant="outline"
+                  variant="solid"
+                  colorScheme="cyan"
                   type="submit"
                 >
                   {isLoading ? (
@@ -218,6 +218,7 @@ const Login = ({ user, setUser }) => {
                       value={password}
                       name="password"
                       placeholder="********"
+                      mb={4}
                       onChange={e => setPassword(e.target.value)}
                     />
 
@@ -237,8 +238,8 @@ const Login = ({ user, setUser }) => {
                   width="full"
                   mt={4}
                   size="lg"
-                  variantcolor="teal"
-                  variant="outline"
+                  colorScheme="cyan"
+                  variant="solid"
                   type="submit"
                 >
                   {isLoading ? (
@@ -267,8 +268,11 @@ const Login = ({ user, setUser }) => {
           </Text>
           <Button
             fontWeight="Bold"
-            variant="text"
+            variant="link"
             size="sm"
+            _focus={{
+              boxShadow: '0 0 0px 0px ',
+            }}
             color="blue"
             onClick={handleSignIn}
           >
@@ -276,10 +280,6 @@ const Login = ({ user, setUser }) => {
           </Button>
         </HStack>
       </VStack>
-
-      <Box px={8} w="full">
-        <Divider color="gray.100" />
-      </Box>
     </Flex>
   );
 };
