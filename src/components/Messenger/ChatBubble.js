@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-// import Moment from 'react-moment';
+import Moment from 'react-moment';
 import { VStack, Box, Text } from '@chakra-ui/react';
+import { auth } from '../../firebase/Firebase';
 
 const ChatBubble = ({ message }) => {
-  const isMe = message.from;
+  const isMe = message.from === auth.currentUser.uid;
   const alignment = isMe ? 'flex-end' : 'flex-start';
   const bottomRightRadius = isMe ? 0 : 32;
   const bottomLeftRadius = isMe ? 32 : 0;
@@ -11,6 +12,7 @@ const ChatBubble = ({ message }) => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [message]);
+
   return (
     <VStack mt={6} alignItems={alignment} alignSelf={alignment}>
       <Box
@@ -27,7 +29,7 @@ const ChatBubble = ({ message }) => {
         {message.text}
       </Box>
       <Text fontSize="xs" color="gray">
-        {/* {message.dateSent.toDate()} */}
+        <Moment fromNow>{message.dateSent.toDate()}</Moment>
       </Text>
     </VStack>
   );

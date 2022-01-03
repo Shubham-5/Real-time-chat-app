@@ -14,19 +14,6 @@ import { MdAccountCircle } from 'react-icons/md';
 
 import ChatBubble from './ChatBubble';
 
-// const messages = [
-//   {
-//     message: 'Hey Shubham ! Would you like to go out for a coffee?',
-//     from: 'others',
-//     dateSent: '20:21',
-//   },
-//   {
-//     message: 'Hey Shubham ! Would you like to go out for a coffee?',
-//     from: 'me',
-//     dateSent: '20:21',
-//   },
-// ];
-
 const Chat = ({
   onChatHistoryOpen,
   onChatFilesOpen,
