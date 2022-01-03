@@ -91,10 +91,6 @@ const ChatFiles = () => {
             variant="outline"
             size="sm"
             color="blue"
-            fontWeight="Bold"
-            variant="outline"
-            size="sm"
-            color="blue"
             onClick={toggleColorMode}
           >
             Click
