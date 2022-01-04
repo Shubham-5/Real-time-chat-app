@@ -15,9 +15,12 @@ import {
   FormLabel,
   InputRightElement,
   Text,
+  useColorMode,
+  IconButton,
+  useColorModeValue,
 } from '@chakra-ui/react';
 
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaSun, FaMoon } from 'react-icons/fa';
 import { auth, db } from '../firebase/Firebase';
 import {
   createUserWithEmailAndPassword,
@@ -34,6 +37,7 @@ const Login = ({ user, setUser }) => {
   const [password, setPassword] = useState('');
 
   const toast = useToast();
+  const signInTextColor = useColorModeValue('blue', 'gray');
 
   //handling login function
   const handleSubmitLogin = async e => {
@@ -99,11 +103,13 @@ const Login = ({ user, setUser }) => {
     }
   };
 
-  //handling password visibility && signin text
+  //handling password visibility && signin text && dark mode toggle
 
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
   const handleSignIn = () => setIsSignIn(!isSignIn);
-
+  const { toggleColorMode } = useColorMode();
+  const [darkIcon, setDarkIcon] = useState(false);
+  const handleDark = () => setDarkIcon(!darkIcon);
   return (
     <Flex
       flexDirection="column"
@@ -111,10 +117,21 @@ const Login = ({ user, setUser }) => {
       height="100vh"
       width="100vw"
     >
-      <HStack justify="center" w="full" px={8}>
+      <HStack justify="center" w="md" px={8}>
         <Heading size="lg" mt="20" color="gray">
           {isSignIn ? 'LOGIN' : 'REGISTER'}
         </Heading>
+
+        <Button variant="disabled" onClick={toggleColorMode}>
+          <IconButton
+            marginTop="6em"
+            color="gray"
+            size="sm"
+            icon={darkIcon ? <FaMoon /> : <FaSun />}
+            aria-label="darkmode"
+            onClick={handleDark}
+          />
+        </Button>
       </HStack>
 
       <Box px={8} w="full">
@@ -273,7 +290,7 @@ const Login = ({ user, setUser }) => {
             _focus={{
               boxShadow: '0 0 0px 0px ',
             }}
-            color="blue"
+            color={signInTextColor}
             onClick={handleSignIn}
           >
             {!isSignIn ? 'Sign In' : 'Sign Up'}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navigation from '../components/Navigation';
+// import Navigation from '../components/Navigation';
 import ChatHistorySidebar from '../components/Chats/ChatHistorySidebar';
 import Chat from '../components/Messenger/Chat';
 import ChatFiles from '../components/Profile/ChatFiles';
@@ -12,10 +12,13 @@ import {
   query,
   where,
   onSnapshot,
+  updateDoc,
   orderBy,
   addDoc,
   setDoc,
+  doc,
   Timestamp,
+  getDoc,
 } from 'firebase/firestore';
 
 const Home = () => {
@@ -47,11 +50,11 @@ const Home = () => {
   const selectFriend = async friend => {
     setChat(friend);
     const isFrom = friend.uid;
-
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
+
+    // get messages from selected user in asc order
     const msgsRef = collection(db, 'messages', id, 'chat');
     const q = query(msgsRef, orderBy('dateSent', 'asc'));
-
     onSnapshot(q, querySnapshot => {
       let msgs = [];
       querySnapshot.forEach(doc => {
@@ -59,12 +62,22 @@ const Home = () => {
       });
       setMessages(msgs);
     });
+
+    // get last message b/w logged in user and selected user
+    const docSnap = await getDoc(doc(db, 'lastMsg', id));
+    // if last message exists and message is from selected user
+    if (docSnap.data() && docSnap.data().from !== isMe) {
+      // update last message doc, set unread to false
+      await updateDoc(doc(db, 'lastMsg', id), { unread: false });
+    }
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     const isFrom = chat.uid;
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
+
+    // adding messages to firestore
     await addDoc(collection(db, 'messages', id, 'chat'), {
       text,
       from: isMe,
@@ -72,6 +85,14 @@ const Home = () => {
       dateSent: Timestamp.fromDate(new Date()),
     });
 
+    // adding last msg
+    await setDoc(doc(db, 'lastMsg', id), {
+      text,
+      from: isMe,
+      to: isFrom,
+      dateSent: Timestamp.fromDate(new Date()),
+      unread: true,
+    });
     setText('');
   };
 
@@ -100,7 +121,6 @@ const Home = () => {
           maxW={{ base: 'xs', xl: 'sm' }}
           display={{ base: 'none', lg: 'flex' }}
           w="full"
-          borderRightColor="gray.100"
           borderRightWidth={1}
           pt={8}
         >
@@ -109,13 +129,7 @@ const Home = () => {
             selectFriend={selectFriend}
           />
         </Flex>
-        <Flex
-          as="main"
-          h="full"
-          flex={1}
-          borderRightColor="gray.100"
-          borderRightWidth={1}
-        >
+        <Flex as="main" h="full" flex={1} borderRightWidth={1}>
           <Chat
             onChatHistoryOpen={onChatHistoryOpen}
             onChatFilesOpen={onChatFilesOpen}

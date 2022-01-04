@@ -8,11 +8,13 @@ import {
   Text,
   List,
   ListItem,
+  useColorModeValue,
 } from '@chakra-ui/react';
 
 import ChatRow from './ChatRow';
 
 const ChatHistorySidebar = ({ onlineFriends, selectFriend }) => {
+  const bgColor = useColorModeValue('', 'gray.800');
   return (
     <VStack h="full" alignItems="center" w="full" mt="20px" spacing={6}>
       <HStack px={8} w="full" justifyContent="space-between">
@@ -23,7 +25,7 @@ const ChatHistorySidebar = ({ onlineFriends, selectFriend }) => {
       </HStack>
 
       <Box px={8} w="full">
-        <Divider color="gray.100" />
+        <Divider color={bgColor} />
       </Box>
       <Box px={8} w="full">
         <Heading size="xs" w="full">

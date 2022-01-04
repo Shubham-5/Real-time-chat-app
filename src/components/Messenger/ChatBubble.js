@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import Moment from 'react-moment';
-import { VStack, Box, Text } from '@chakra-ui/react';
+import { VStack, Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { auth } from '../../firebase/Firebase';
 
 const ChatBubble = ({ message }) => {
@@ -9,6 +9,8 @@ const ChatBubble = ({ message }) => {
   const bottomRightRadius = isMe ? 0 : 32;
   const bottomLeftRadius = isMe ? 32 : 0;
   const scrollRef = useRef();
+  const bgColor = useColorModeValue('gray.100', 'blue.300');
+
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [message]);
@@ -16,8 +18,7 @@ const ChatBubble = ({ message }) => {
   return (
     <VStack mt={6} alignItems={alignment} alignSelf={alignment}>
       <Box
-        bg={isMe ? 'blue.50' : 'gray.100'}
-        // color="gray"
+        bg={bgColor}
         px={6}
         py={4}
         maxW={80}

@@ -1,17 +1,31 @@
+import React, { useState, useEffect } from 'react';
 import { Flex, Heading, Text, VStack } from '@chakra-ui/react';
 import UserAvatar from './UserAvatar';
+import { onSnapshot, doc } from 'firebase/firestore';
+import { auth, db } from '../../firebase/Firebase';
+import Moment from 'react-moment';
 
 const ChatRow = ({ selectFriend, friend }) => {
+  const isMe = auth.currentUser.uid;
+  const isFrom = friend?.uid;
+  const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
+  const [unreadData, setUnreadData] = useState('');
+  useEffect(() => {
+    let unsub = onSnapshot(doc(db, 'lastMsg', id), doc => {
+      setUnreadData(doc.data());
+    });
+    return () => unsub();
+  }, []);
+
   return (
     <Flex
       py={4}
       px={8}
       w="full"
       alignItems="center"
-      borderBottomColor="gray.100"
       borderBottomWidth={1}
       style={{ transition: 'background 300ms' }}
-      _hover={{ bg: 'gray.50', cursor: 'pointer' }}
+      _hover={{ bg: 'blue.50', cursor: 'pointer' }}
       onClick={() => selectFriend(friend)}
     >
       <UserAvatar name={friend.name} friend={friend} />
@@ -25,6 +39,7 @@ const ChatRow = ({ selectFriend, friend }) => {
         <Heading fontSize={12} w="full">
           {friend.name}
         </Heading>
+
         <Text
           overflow="hidden"
           textOverflow="ellipsis"
@@ -33,11 +48,15 @@ const ChatRow = ({ selectFriend, friend }) => {
           fontSize="xs"
           color="gray.500"
         >
-          Sample text message goes here.
+          {unreadData && unreadData.from === isMe ? 'Me: ' : null}
+
+          {unreadData && unreadData.text}
         </Text>
       </VStack>
       <Text ml={3} fontSize="xs" color="gray.500">
-        08:30
+        {unreadData ? (
+          <Moment fromNow>{unreadData && unreadData.dateSent.toDate()}</Moment>
+        ) : null}
       </Text>
     </Flex>
   );

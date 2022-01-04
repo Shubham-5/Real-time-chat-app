@@ -1,6 +1,6 @@
 import { VStack, IconButton, Tooltip } from '@chakra-ui/react';
 
-import { HiBell, HiLogout, HiSearch } from 'react-icons/hi';
+import { HiLogout } from 'react-icons/hi';
 
 import ChakraLogo from './ChakraLogo';
 

@@ -6,6 +6,7 @@ import {
   Stat,
   StatLabel,
   StatNumber,
+  useColorModeValue,
 } from '@chakra-ui/react';
 
 import { HiChat } from 'react-icons/hi';
@@ -23,9 +24,10 @@ const Chat = ({
   handleSubmit,
   messages,
 }) => {
+  const bgColor = useColorModeValue('', 'gray.800');
   return (
-    <Flex w="full" flexDirection="column">
-      <HStack px={4} py={4} borderBottomColor="gray.100" borderBottomWidth={1}>
+    <Flex w="full" flexDirection="column" bg={bgColor}>
+      <HStack px={4} py={4} borderBottomWidth={1}>
         <IconButton
           onClick={onChatHistoryOpen}
           display={{ base: 'inherit', lg: 'none' }}
@@ -37,7 +39,7 @@ const Chat = ({
           onClick={onChatFilesOpen}
           display={{ base: 'inherit', lg: 'none' }}
           icon={<MdAccountCircle />}
-          aria-label="Toggle Chat Files Drawer"
+          aria-label="Toggle Profile Drawer"
         />
       </HStack>
       <Flex px={6} overflowY="auto" flexDirection="column" flex={1}>
@@ -53,7 +55,7 @@ const Chat = ({
             ))
           : null}
       </Flex>
-      <Flex pl={4} pr={2} py={2} borderTopColor="gray.100" borderTopWidth={1}>
+      <Flex pl={4} pr={2} py={2} borderTopWidth={1}>
         <Input
           variant="unstyled"
           placeholder="Type your message"
