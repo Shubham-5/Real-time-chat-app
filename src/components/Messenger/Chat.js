@@ -55,22 +55,25 @@ const Chat = ({
             ))
           : null}
       </Flex>
-      <Flex pl={4} pr={2} py={2} borderTopWidth={1}>
-        <Input
-          variant="unstyled"
-          placeholder="Type your message"
-          value={text}
-          onChange={e => setText(e.target.value)}
-          onSubmit={handleSubmit}
-        />
-        <IconButton
-          colorScheme="blue"
-          aria-label="Send message"
-          variant="ghost"
-          icon={<FaPaperPlane />}
-          onClick={handleSubmit}
-        />
-      </Flex>
+      <form onSubmit={handleSubmit}>
+        <Flex pl={4} pr={2} py={2} borderRadius="20px" borderTopWidth={1}>
+          <Input
+            variant="unstyled"
+            placeholder="Type your message"
+            value={text}
+            disabled={!chat}
+            onChange={e => setText(e.target.value)}
+            onSubmit={handleSubmit}
+          />
+          <IconButton
+            colorScheme="blue"
+            aria-label="Send message"
+            variant="ghost"
+            icon={<FaPaperPlane />}
+            onClick={handleSubmit}
+          />
+        </Flex>
+      </form>
     </Flex>
   );
 };

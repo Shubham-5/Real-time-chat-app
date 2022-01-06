@@ -11,8 +11,9 @@ import {
   Divider,
   VStack,
   Button,
+  IconButton,
 } from '@chakra-ui/react';
-
+import { FaSun, FaMoon, FaSignOutAlt } from 'react-icons/fa';
 import { signOut } from 'firebase/auth';
 import {
   updateDoc,
@@ -23,9 +24,11 @@ import {
   where,
 } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
+import { useCustomHook } from '../../context/useCustomHook';
 
 const ChatFiles = () => {
   const [isMe, setIsMe] = useState('');
+  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
   useEffect(() => {
     const userRef = collection(db, 'users');
     //query object
@@ -65,9 +68,16 @@ const ChatFiles = () => {
       </Box>
       <VStack spacing={6} overflowY="auto" w="full">
         <HStack px={8} w="full" mt={6} justifyContent="space-between">
-          <Heading size="md">Account</Heading>
+          <Button variant="disabled" onClick={toggleColorMode}>
+            <IconButton
+              size="sm"
+              variant="ghost"
+              icon={darkIcon ? <FaSun /> : <FaMoon />}
+              aria-label="darkmode"
+              onClick={handleDark}
+            />
+          </Button>
           <Button
-            fontWeight="Bold"
             variant="outline"
             size="sm"
             onClick={async () => {
@@ -78,6 +88,12 @@ const ChatFiles = () => {
             }}
           >
             Log Out
+            <IconButton
+              ml="1em"
+              variant="ghost"
+              size="sm"
+              icon={<FaSignOutAlt />}
+            />
           </Button>
         </HStack>
 

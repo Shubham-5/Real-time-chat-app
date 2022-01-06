@@ -26,13 +26,13 @@ const ChatBubble = ({ message }) => {
         borderTopRightRadius={32}
         borderBottomLeftRadius={bottomLeftRadius}
         borderBottomRightRadius={bottomRightRadius}
-        ref={scrollRef}
       >
         {message.text}
       </Box>
       <Text fontSize="xs" color="gray">
         <Moment fromNow>{message.dateSent.toDate()}</Moment>
       </Text>
+      <Text ref={scrollRef}></Text>
     </VStack>
   );
 };

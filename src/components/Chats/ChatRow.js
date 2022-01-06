@@ -15,17 +15,17 @@ const ChatRow = ({ selectFriend, friend }) => {
       setUnreadData(doc.data());
     });
     return () => unsub();
-  }, []);
+  }, [id]);
 
   return (
     <Flex
-      py={4}
+      py={3}
       px={8}
       w="full"
       alignItems="center"
       borderBottomWidth={1}
       style={{ transition: 'background 300ms' }}
-      _hover={{ bg: 'blue.50', cursor: 'pointer' }}
+      _hover={{ opacity: '0.9', cursor: 'pointer' }}
       onClick={() => selectFriend(friend)}
     >
       <UserAvatar name={friend.name} friend={friend} />

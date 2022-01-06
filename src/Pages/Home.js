@@ -45,7 +45,7 @@ const Home = () => {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [isMe]);
 
   const selectFriend = async friend => {
     setChat(friend);

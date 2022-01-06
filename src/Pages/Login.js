@@ -15,11 +15,9 @@ import {
   FormLabel,
   InputRightElement,
   Text,
-  useColorMode,
   IconButton,
   useColorModeValue,
 } from '@chakra-ui/react';
-
 import { FaEye, FaEyeSlash, FaSun, FaMoon } from 'react-icons/fa';
 import { auth, db } from '../firebase/Firebase';
 import {
@@ -27,8 +25,9 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { updateDoc, doc, setDoc, Timestamp } from 'firebase/firestore';
+import { useCustomHook } from '../context/useCustomHook';
 
-const Login = ({ user, setUser }) => {
+const Login = ({ setUser }) => {
   const [isSignIn, setIsSignIn] = useState(false);
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +36,7 @@ const Login = ({ user, setUser }) => {
   const [password, setPassword] = useState('');
 
   const toast = useToast();
+  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
   const signInTextColor = useColorModeValue('blue', 'gray');
 
   //handling login function
@@ -107,9 +107,7 @@ const Login = ({ user, setUser }) => {
 
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
   const handleSignIn = () => setIsSignIn(!isSignIn);
-  const { toggleColorMode } = useColorMode();
-  const [darkIcon, setDarkIcon] = useState(false);
-  const handleDark = () => setDarkIcon(!darkIcon);
+
   return (
     <Flex
       flexDirection="column"
@@ -122,12 +120,12 @@ const Login = ({ user, setUser }) => {
           {isSignIn ? 'LOGIN' : 'REGISTER'}
         </Heading>
 
-        <Button variant="disabled" onClick={toggleColorMode}>
+        <Button variant="disabled" marginTop="6em" onClick={toggleColorMode}>
           <IconButton
             marginTop="6em"
-            color="gray"
+            variant="ghost"
             size="sm"
-            icon={darkIcon ? <FaMoon /> : <FaSun />}
+            icon={darkIcon ? <FaSun /> : <FaMoon />}
             aria-label="darkmode"
             onClick={handleDark}
           />
