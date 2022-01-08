@@ -64,15 +64,11 @@ const Chat = ({
           : null}
       </Flex>
       <form onSubmit={handleSubmit}>
-        <Flex pl={4} pr={2} py={2} borderRadius="20px" borderTopWidth={1}>
+        <Flex pl={4} pr={2} py={2} borderTopWidth={1}>
           <FormControl isRequired>
             <Input
               variant="unstyled"
-              placeholder={
-                chat
-                  ? 'Type your message'
-                  : 'Please select your friend to type message'
-              }
+              placeholder="Type your message"
               value={text}
               isDisabled={!chat}
               onChange={e => setText(e.target.value)}
@@ -80,26 +76,16 @@ const Chat = ({
             />
           </FormControl>
 
-          {/* <IconButton
-            mr="20px"
-            colorScheme="blue"
-            aria-label="Send image"
-            variant="ghost"
-            icon={<MdPermMedia />}
-          /> */}
-
-          {/* <InputGroup> */}
           <Button
             colorScheme="blue"
             h="2.5rem"
             variant="ghost"
-            width="6rem"
             size="sm"
+            width="30px"
             mr="1rem"
             _hover={{ bg: '' }}
             _active={{
               bg: '',
-
               borderColor: '#',
             }}
           >
@@ -112,10 +98,17 @@ const Chat = ({
               variant="ghost"
               opacity="0"
               display="block"
-              left="1rem"
+              left="1.8rem"
               top="0.5rem"
             />
-            <MdPermMedia size="lg" />
+            <IconButton
+              colorScheme="blue"
+              mr="30px"
+              aria-label="Send images"
+              variant="ghost"
+              pointerEvents="none"
+              icon={<MdPermMedia />}
+            />
           </Button>
           {/* </InputGroup> */}
           <IconButton

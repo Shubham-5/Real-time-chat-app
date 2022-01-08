@@ -105,25 +105,25 @@ const Home = () => {
     }
 
     // adding messages to firestore
+    if (text || img) {
+      await addDoc(collection(db, 'messages', id, 'chat'), {
+        text,
+        from: isMe,
+        to: isFrom,
+        dateSent: Timestamp.fromDate(new Date()),
+        media: url || '',
+      });
 
-    await addDoc(collection(db, 'messages', id, 'chat'), {
-      text,
-      from: isMe,
-      to: isFrom,
-      dateSent: Timestamp.fromDate(new Date()),
-      media: url || '',
-    });
-
-    // adding last msg
-    await setDoc(doc(db, 'lastMsg', id), {
-      text,
-      from: isMe,
-      to: isFrom,
-      dateSent: Timestamp.fromDate(new Date()),
-      media: url || '',
-      unread: true,
-    });
-
+      // adding last msg
+      await setDoc(doc(db, 'lastMsg', id), {
+        text,
+        from: isMe,
+        to: isFrom,
+        dateSent: Timestamp.fromDate(new Date()),
+        media: url || '',
+        unread: true,
+      });
+    }
     setText('');
     setImg('');
   };

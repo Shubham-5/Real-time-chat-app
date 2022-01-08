@@ -117,7 +117,7 @@ const Login = ({ setUser }) => {
     >
       <HStack justify="center" my="30px" w="md" px={8}>
         <Heading size="lg" color="gray">
-          {isSignIn ? 'LOGIN' : 'REGISTER'}
+          {isSignIn ? 'SIGN IN' : 'SIGN UP'}
         </Heading>
         <Box onClick={handleDark}>
           <IconButton
