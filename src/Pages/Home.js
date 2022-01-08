@@ -6,7 +6,8 @@ import ChatFiles from '../components/Profile/ChatFiles';
 import ChatHistoryDrawer from '../components/Chats/ChatHistoryDrawer';
 import ChatFilesDrawer from '../components/Profile/ChatFilesDrawer';
 import { HStack, Flex, useDisclosure } from '@chakra-ui/react';
-import { auth, db } from '../firebase/Firebase';
+import { auth, db, storage } from '../firebase/Firebase';
+import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 import {
   collection,
   query,
@@ -22,10 +23,23 @@ import {
 } from 'firebase/firestore';
 
 const Home = () => {
+  const {
+    isOpen: isChatHistoryOpen,
+    onOpen: onChatHistoryOpen,
+    onClose: onChatHistoryClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isChatFilesOpen,
+    onOpen: onChatFilesOpen,
+    onClose: onChatFilesClose,
+  } = useDisclosure();
+
   const [onlineFriends, setOnlineFriends] = useState([]);
   const [chat, setChat] = useState('');
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
+  const [img, setImg] = useState('');
 
   const isMe = auth.currentUser.uid;
 
@@ -49,6 +63,7 @@ const Home = () => {
 
   const selectFriend = async friend => {
     setChat(friend);
+
     const isFrom = friend.uid;
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
@@ -77,12 +92,26 @@ const Home = () => {
     const isFrom = chat.uid;
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
+    // sending images
+    let url;
+    if (img) {
+      const imgRef = ref(
+        storage,
+        `images/${new Date().getTime()} - ${img.name}`
+      );
+      const snap = await uploadBytes(imgRef, img);
+      const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+      url = dlUrl;
+    }
+
     // adding messages to firestore
+
     await addDoc(collection(db, 'messages', id, 'chat'), {
       text,
       from: isMe,
       to: isFrom,
       dateSent: Timestamp.fromDate(new Date()),
+      media: url || '',
     });
 
     // adding last msg
@@ -91,22 +120,13 @@ const Home = () => {
       from: isMe,
       to: isFrom,
       dateSent: Timestamp.fromDate(new Date()),
+      media: url || '',
       unread: true,
     });
+
     setText('');
+    setImg('');
   };
-
-  const {
-    isOpen: isChatHistoryOpen,
-    onOpen: onChatHistoryOpen,
-    onClose: onChatHistoryClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isChatFilesOpen,
-    onOpen: onChatFilesOpen,
-    onClose: onChatFilesClose,
-  } = useDisclosure();
 
   return (
     <>
@@ -137,6 +157,7 @@ const Home = () => {
             handleSubmit={handleSubmit}
             setText={setText}
             text={text}
+            setImg={setImg}
             messages={messages}
           />
         </Flex>

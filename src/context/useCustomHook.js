@@ -10,7 +10,9 @@ export function AuthProvider({ children }) {
   // const [user, setUser] = useState('');
   const { toggleColorMode } = useColorMode();
   const [darkIcon, setDarkIcon] = useState(false);
-  const handleDark = () => setDarkIcon(!darkIcon);
+  const handleDark = () => {
+    setDarkIcon(!darkIcon);
+  };
 
   // useEffect(() => {
   //   onAuthStateChanged(auth, currentUser => {

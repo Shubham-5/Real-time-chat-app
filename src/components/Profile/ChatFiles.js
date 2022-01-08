@@ -23,7 +23,10 @@ import {
   collection,
   where,
 } from 'firebase/firestore';
+
+import moment from 'moment';
 import { auth, db } from '../../firebase/Firebase';
+import { MdAdd, MdDeleteForever } from 'react-icons/md';
 import { useCustomHook } from '../../context/useCustomHook';
 
 const ChatFiles = () => {
@@ -31,36 +34,37 @@ const ChatFiles = () => {
   const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
   useEffect(() => {
     const userRef = collection(db, 'users');
-    //query object
-    const q = query(userRef, where('uid', '==', auth.currentUser.uid));
-
+    const q = query(userRef, where('uid', 'in', [auth.currentUser.uid]));
     //execute query
     const unsubscribe = onSnapshot(q, querySnap => {
-      let user = [];
       querySnap.forEach(doc => {
-        user.push(doc.data());
+        setIsMe(doc.data());
       });
-
-      setIsMe(user);
     });
-    return () => {
-      unsubscribe();
-    };
+
+    return unsubscribe;
   }, []);
+  if (isMe) {
+    var accountCreatedDate = moment(isMe.createdAt.toDate()).format(
+      'MMM DD YYYY h:mm A'
+    );
+  }
 
   return (
     <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
       <HStack justify="center" w="full" px={8} mb={8}>
-        <Text color="gray.500"></Text>
+        <Text color="gray.500">{isMe && accountCreatedDate}</Text>
       </HStack>
-      <Button rounded="full" width="2px" p={20}>
-        <Avatar size="2xl" name="Dina Harrison">
-          <AvatarBadge boxSize={8} borderWidth={4} bg="green.400" />
-        </Avatar>
-      </Button>
+
+      <Avatar size="2xl">
+        <HStack justify="center" w="full" px={8}>
+          <IconButton variant="ghost" size="sm" icon={<MdAdd />} />
+          <IconButton variant="ghost" size="sm" icon={<MdDeleteForever />} />
+        </HStack>
+      </Avatar>
 
       <Heading size="md" mt={5}>
-        {isMe && isMe[0].name}
+        {isMe && isMe.name}
       </Heading>
 
       <Box px={8} w="full">

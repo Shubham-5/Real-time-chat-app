@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import { Flex, Heading, Text, VStack, useDisclosure } from '@chakra-ui/react';
 import UserAvatar from './UserAvatar';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
@@ -14,7 +14,7 @@ const ChatRow = ({ selectFriend, friend }) => {
     let unsub = onSnapshot(doc(db, 'lastMsg', id), doc => {
       setUnreadData(doc.data());
     });
-    return () => unsub();
+    return () => unsub;
   }, [id]);
 
   return (

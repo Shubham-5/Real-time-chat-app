@@ -28,7 +28,7 @@ import { updateDoc, doc, setDoc, Timestamp } from 'firebase/firestore';
 import { useCustomHook } from '../context/useCustomHook';
 
 const Login = ({ setUser }) => {
-  const [isSignIn, setIsSignIn] = useState(false);
+  const [isSignIn, setIsSignIn] = useState(true);
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,21 +115,19 @@ const Login = ({ setUser }) => {
       height="100vh"
       width="100vw"
     >
-      <HStack justify="center" w="md" px={8}>
-        <Heading size="lg" mt="20" color="gray">
+      <HStack justify="center" my="30px" w="md" px={8}>
+        <Heading size="lg" color="gray">
           {isSignIn ? 'LOGIN' : 'REGISTER'}
         </Heading>
-
-        <Button variant="disabled" marginTop="6em" onClick={toggleColorMode}>
+        <Box onClick={handleDark}>
           <IconButton
-            marginTop="6em"
             variant="ghost"
             size="sm"
             icon={darkIcon ? <FaSun /> : <FaMoon />}
             aria-label="darkmode"
-            onClick={handleDark}
+            onClick={toggleColorMode}
           />
-        </Button>
+        </Box>
       </HStack>
 
       <Box px={8} w="full">

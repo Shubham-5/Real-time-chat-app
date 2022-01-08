@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import Moment from 'react-moment';
-import { VStack, Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { VStack, Box, Text, useColorModeValue, Image } from '@chakra-ui/react';
 import { auth } from '../../firebase/Firebase';
 
 const ChatBubble = ({ message }) => {
@@ -27,6 +27,14 @@ const ChatBubble = ({ message }) => {
         borderBottomLeftRadius={bottomLeftRadius}
         borderBottomRightRadius={bottomRightRadius}
       >
+        {message.media ? (
+          <Image
+            src={message.media}
+            boxSize="150px"
+            objectFit="cover"
+            alt={message.text}
+          />
+        ) : null}
         {message.text}
       </Box>
       <Text fontSize="xs" color="gray">
