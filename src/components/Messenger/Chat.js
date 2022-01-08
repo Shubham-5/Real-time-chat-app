@@ -3,16 +3,12 @@ import {
   Flex,
   FormControl,
   HStack,
-  Image,
   IconButton,
-  InputGroup,
   Input,
   Stat,
-  InputRightElement,
   StatLabel,
   StatNumber,
   useColorModeValue,
-  Box,
 } from '@chakra-ui/react';
 
 import { HiChat } from 'react-icons/hi';
@@ -20,7 +16,7 @@ import { FaPaperPlane } from 'react-icons/fa';
 import { MdAccountCircle, MdPermMedia } from 'react-icons/md';
 
 import ChatBubble from './ChatBubble';
-import galleryIcon from '../../assests/gallery.png';
+
 const Chat = ({
   onChatHistoryOpen,
   onChatFilesOpen,

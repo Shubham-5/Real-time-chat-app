@@ -9,7 +9,8 @@ const ChatBubble = ({ message }) => {
   const bottomRightRadius = isMe ? 0 : 32;
   const bottomLeftRadius = isMe ? 32 : 0;
   const scrollRef = useRef();
-  const bgColor = useColorModeValue('gray.100', 'blue.300');
+  const bgColor1 = useColorModeValue('gray.100', 'blue.300');
+  const bgColor2 = useColorModeValue('teal.200', 'teal.300');
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -18,20 +19,23 @@ const ChatBubble = ({ message }) => {
   return (
     <VStack mt={6} alignItems={alignment} alignSelf={alignment}>
       <Box
-        bg={bgColor}
-        px={6}
-        py={4}
+        bg={isMe ? bgColor1 : bgColor2}
+        px={message.media ? 2 : 6}
+        py={message.media ? 2 : 4}
         maxW={80}
-        borderTopLeftRadius={32}
-        borderTopRightRadius={32}
-        borderBottomLeftRadius={bottomLeftRadius}
-        borderBottomRightRadius={bottomRightRadius}
+        borderTopLeftRadius={message.media ? 5 : 32}
+        borderTopRightRadius={message.media ? 5 : 32}
+        borderBottomLeftRadius={message.media ? 5 : bottomLeftRadius}
+        borderBottomRightRadius={message.media ? 5 : bottomRightRadius}
       >
         {message.media ? (
           <Image
             src={message.media}
-            boxSize="150px"
-            objectFit="cover"
+            height="100%"
+            maxH="400px"
+            width="100%"
+            // boxSize="200px"
+            // objectFit="cover"
             alt={message.text}
           />
         ) : null}

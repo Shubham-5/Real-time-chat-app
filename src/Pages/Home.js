@@ -46,6 +46,7 @@ const Home = () => {
   useEffect(() => {
     const userRef = collection(db, 'users');
     //query object
+
     const q = query(userRef, where('uid', 'not-in', [isMe]));
     //execute query
     const unsubscribe = onSnapshot(q, querySnap => {
@@ -56,6 +57,7 @@ const Home = () => {
 
       setOnlineFriends(users);
     });
+
     return () => {
       unsubscribe();
     };
