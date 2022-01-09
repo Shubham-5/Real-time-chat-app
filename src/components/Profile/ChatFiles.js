@@ -12,7 +12,7 @@ import {
   IconButton,
   Input,
 } from '@chakra-ui/react';
-import { FaSun, FaMoon, FaSignOutAlt } from 'react-icons/fa';
+import { FaSun, FaMoon, FaSignOutAlt, FaUpload } from 'react-icons/fa';
 import { signOut } from 'firebase/auth';
 import { updateDoc, doc, getDoc } from 'firebase/firestore';
 
@@ -30,6 +30,7 @@ import { useCustomHook } from '../../context/useCustomHook';
 const ChatFiles = () => {
   const [isMe, setIsMe] = useState('');
   const [img, setImg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
 
@@ -41,6 +42,7 @@ const ChatFiles = () => {
     });
 
     if (img) {
+      // Upload file and metadata to the object
       const uploadImg = async () => {
         const imgRef = ref(
           storage,
@@ -50,13 +52,15 @@ const ChatFiles = () => {
           if (isMe.avatarPath) {
             await deleteObject(ref(storage, isMe.avatarPath));
           }
-          const snap = await uploadBytes(imgRef, img);
-          const url = await getDownloadURL(ref(storage, snap.ref.fullPath));
 
+          const snap = await uploadBytes(imgRef, img);
+          setIsLoading(true);
+          const url = await getDownloadURL(ref(storage, snap.ref.fullPath));
           await updateDoc(doc(db, 'users', auth.currentUser.uid), {
             avatar: url,
             avatarPath: snap.ref.fullPath,
           });
+          setIsLoading(false);
 
           setImg('');
         } catch (err) {
@@ -96,47 +100,6 @@ const ChatFiles = () => {
 
       <Avatar src={isMe.avatar} name={isMe.name} size="2xl"></Avatar>
 
-      <HStack justify="center" w="full">
-        <Button
-          colorScheme="blue"
-          h="2.5rem"
-          variant="ghost"
-          size="sm"
-          width="30px"
-          mr="1rem"
-          _hover={{ bg: '' }}
-          _active={{
-            bg: '',
-            borderColor: '',
-          }}
-        >
-          <Input
-            type="file"
-            accept="image/*"
-            id="photo"
-            variant="ghost"
-            opacity="0"
-            display="block"
-            left="1.8rem"
-            top="0.5rem"
-            onChange={e => setImg(e.target.files[0])}
-          />
-          <IconButton
-            variant="ghost"
-            cursor="pointer"
-            size="lg"
-            pointerEvents="none"
-            icon={<MdAdd />}
-          />
-        </Button>
-        <IconButton
-          variant="ghost"
-          onClick={deleteImage}
-          size="sm"
-          icon={<MdDeleteForever />}
-        />
-      </HStack>
-
       <Heading size="md" mt={5}>
         {isMe && isMe.name}
       </Heading>
@@ -144,8 +107,62 @@ const ChatFiles = () => {
       <Box px={8} w="full">
         <Divider mt={6} color="gray.100" />
       </Box>
-      <VStack spacing={6} overflowY="auto" w="full">
-        <HStack px={8} w="full" mt={6} justifyContent="space-between">
+      <VStack overflowY="auto" mt="2rem" w="full">
+        {isMe.avatar && (
+          <Box px={8} w="full" justify="center">
+            <Button
+              variant="outline"
+              colorScheme="telegram"
+              size="lg"
+              width="full"
+              mt="0.9rem"
+              isLoading={isLoading}
+              loadingText="Uploading.."
+            >
+              Update Image
+              <IconButton
+                ml="9px"
+                variant="ghost"
+                size="sm"
+                icon={<FaUpload />}
+              />
+            </Button>
+            <Input
+              type="file"
+              accept="image/*"
+              id="photo"
+              variant="ghost"
+              opacity="0"
+              display="block"
+              left="0"
+              bottom="12"
+              onChange={e => setImg(e.target.files[0])}
+            />
+          </Box>
+        )}
+        {!isMe.avatar && (
+          <Box px={8} w="full" justify="center">
+            <Button
+              variant="outline"
+              colorScheme="telegram"
+              size="lg"
+              width="full"
+              mt="0.9rem"
+              onClick={deleteImage}
+            >
+              Delete Image
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={<MdDeleteForever />}
+              />
+            </Button>
+          </Box>
+        )}
+        <Box px={8} w="full">
+          <Divider color="gray.100" />
+        </Box>
+        <HStack px={8} w="full" justifyContent="space-between">
           <Button variant="disabled" onClick={toggleColorMode}>
             <IconButton
               size="sm"
@@ -174,11 +191,9 @@ const ChatFiles = () => {
             />
           </Button>
         </HStack>
-
         <Box px={8} w="full">
           <Divider mt={6} color="gray.100" />
         </Box>
-        <HStack px={8} w="full" mt={6} justifyContent="space-between"></HStack>
       </VStack>
     </Flex>
   );
