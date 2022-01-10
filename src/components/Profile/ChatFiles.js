@@ -14,84 +14,30 @@ import {
 } from '@chakra-ui/react';
 import { FaSun, FaMoon, FaSignOutAlt, FaUpload } from 'react-icons/fa';
 import { signOut } from 'firebase/auth';
-import { updateDoc, doc, getDoc } from 'firebase/firestore';
-
+import { updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
-import {
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  deleteObject,
-} from 'firebase/storage';
-import { auth, db, storage } from '../../firebase/Firebase';
+import { auth, db } from '../../firebase/Firebase';
 import { MdAdd, MdDeleteForever } from 'react-icons/md';
 import { useCustomHook } from '../../context/useCustomHook';
 
 const ChatFiles = () => {
-  const [isMe, setIsMe] = useState('');
-  const [img, setImg] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    toggleColorMode,
+    handleDark,
+    darkIcon,
+    isLoading,
+    isMe,
+    setImg,
+    deleteImage,
+  } = useCustomHook();
 
-  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
-
-  useEffect(() => {
-    getDoc(doc(db, 'users', auth.currentUser.uid)).then(docSnap => {
-      if (docSnap.exists) {
-        setIsMe(docSnap.data());
-      }
-    });
-
-    if (img) {
-      // Upload file and metadata to the object
-      const uploadImg = async () => {
-        const imgRef = ref(
-          storage,
-          `avatar/${new Date().getTime()} - ${img.name}`
-        );
-        try {
-          if (isMe.avatarPath) {
-            await deleteObject(ref(storage, isMe.avatarPath));
-          }
-
-          const snap = await uploadBytes(imgRef, img);
-          setIsLoading(true);
-          const url = await getDownloadURL(ref(storage, snap.ref.fullPath));
-          await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-            avatar: url,
-            avatarPath: snap.ref.fullPath,
-          });
-          setIsLoading(false);
-
-          setImg('');
-        } catch (err) {
-          console.log(err.message);
-        }
-      };
-      uploadImg();
-    }
-  }, [img, isMe.avatarPath]);
-
+  // //joining date of user formating
   if (isMe) {
     var accountCreatedDate = moment(isMe.createdAt.toDate()).format(
       'MMM DD YYYY h:mm A'
     );
   }
 
-  const deleteImage = async () => {
-    try {
-      const confirm = window.confirm('Delete avatar?');
-      if (confirm) {
-        await deleteObject(ref(storage, isMe.avatarPath));
-
-        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-          avatar: '',
-          avatarPath: '',
-        });
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
   return (
     <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
       <HStack justify="center" w="full" px={8} mb={8}>
@@ -108,7 +54,7 @@ const ChatFiles = () => {
         <Divider mt={6} color="gray.100" />
       </Box>
       <VStack overflowY="auto" mt="2rem" w="full">
-        {isMe.avatar && (
+        {!isMe.avatar && (
           <Box px={8} w="full" justify="center">
             <Button
               variant="outline"
@@ -119,7 +65,7 @@ const ChatFiles = () => {
               isLoading={isLoading}
               loadingText="Uploading.."
             >
-              Update Image
+              Change Profile
               <IconButton
                 ml="9px"
                 variant="ghost"
@@ -140,8 +86,8 @@ const ChatFiles = () => {
             />
           </Box>
         )}
-        {!isMe.avatar && (
-          <Box px={8} w="full" justify="center">
+        {isMe.avatar && (
+          <Box px={8} w="full" mb="2.5rem" justify="center">
             <Button
               variant="outline"
               colorScheme="telegram"
@@ -150,7 +96,7 @@ const ChatFiles = () => {
               mt="0.9rem"
               onClick={deleteImage}
             >
-              Delete Image
+              Delete Profile
               <IconButton
                 variant="ghost"
                 size="sm"

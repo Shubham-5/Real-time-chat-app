@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import Navigation from '../components/Navigation';
 import ChatHistorySidebar from '../components/Chats/ChatHistorySidebar';
 import Chat from '../components/Messenger/Chat';
 import ChatFiles from '../components/Profile/ChatFiles';
@@ -41,13 +40,14 @@ const Home = () => {
   const [messages, setMessages] = useState([]);
   const [img, setImg] = useState('');
 
+  //current user id
   const isMe = auth.currentUser.uid;
 
+  //chat row component code ----
   useEffect(() => {
     const userRef = collection(db, 'users');
     //query object
-
-    const q = query(userRef, where('uid', 'not-in', [isMe]));
+    const q = query(userRef, where('uid', '!=', [isMe]));
     //execute query
     const unsubscribe = onSnapshot(q, querySnap => {
       let users = [];
@@ -62,6 +62,8 @@ const Home = () => {
       unsubscribe();
     };
   }, [isMe]);
+
+  //chat -- chathistory component code -------
 
   const selectFriend = async friend => {
     setChat(friend);
@@ -91,7 +93,9 @@ const Home = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    //selected friend id
     const isFrom = chat.uid;
+    //document id
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
     // sending images
@@ -129,14 +133,10 @@ const Home = () => {
     setText('');
     setImg('');
   };
-
+  //----- end here ------
   return (
     <>
       <HStack h="100vh" spacing={0}>
-        {/* <Flex as="nav" h="full" maxW={16} w="full" bg="gray.100">
-          <Navigation />
-        </Flex> */}
-
         <Flex
           as="aside"
           h="full"
