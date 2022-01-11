@@ -67,6 +67,8 @@ const Chat = ({
               placeholder="Type your message"
               value={text}
               isDisabled={!chat}
+              display="block"
+              top="4px"
               onChange={e => setText(e.target.value)}
               onSubmit={handleSubmit}
             />

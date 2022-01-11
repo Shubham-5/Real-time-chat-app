@@ -7,16 +7,15 @@ import {
 import ChatFiles from './ChatFiles';
 import { useCustomHook } from '../../context/useCustomHook';
 
-const ChatFilesDrawer = ({ isOpen, onClose }) => {
-  const {
-    toggleColorMode,
-    handleDark,
-    darkIcon,
-    isLoading,
-    isMe,
-    setImg,
-    deleteImage,
-  } = useCustomHook();
+const ChatFilesDrawer = ({
+  isOpen,
+  onClose,
+  isUploading,
+  profileData,
+  deleteImage,
+  setProfileImg,
+}) => {
+  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
       <DrawerOverlay>
@@ -26,9 +25,9 @@ const ChatFilesDrawer = ({ isOpen, onClose }) => {
             toggleColorMode={toggleColorMode}
             handleDark={handleDark}
             darkIcon={darkIcon}
-            isLoading={isLoading}
-            isMe={isMe}
-            setImg={setImg}
+            isUploading={isUploading}
+            profileData={profileData}
+            setProfileImg={setProfileImg}
             deleteImage={deleteImage}
           />
         </DrawerContent>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Flex,
   HStack,
@@ -13,27 +13,23 @@ import {
   Input,
 } from '@chakra-ui/react';
 import { FaSun, FaMoon, FaSignOutAlt, FaUpload } from 'react-icons/fa';
-import { signOut } from 'firebase/auth';
-import { updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
-import { auth, db } from '../../firebase/Firebase';
 import { MdAdd, MdDeleteForever } from 'react-icons/md';
 import { useCustomHook } from '../../context/useCustomHook';
 
-const ChatFiles = () => {
-  const {
-    toggleColorMode,
-    handleDark,
-    darkIcon,
-    isLoading,
-    isMe,
-    setImg,
-    deleteImage,
-  } = useCustomHook();
+const ChatFiles = ({
+  profileData,
+  setProfileImg,
+  isUploading,
+  deleteImage,
+
+  handleSignOut,
+}) => {
+  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
 
   // //joining date of user formating
-  if (isMe) {
-    var accountCreatedDate = moment(isMe.createdAt.toDate()).format(
+  if (profileData) {
+    var accountCreatedDate = moment(profileData.createdAt.toDate()).format(
       'MMM DD YYYY h:mm A'
     );
   }
@@ -41,20 +37,24 @@ const ChatFiles = () => {
   return (
     <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
       <HStack justify="center" w="full" px={8} mb={8}>
-        <Text color="gray.500">{isMe && accountCreatedDate}</Text>
+        <Text color="gray.500">{profileData && accountCreatedDate}</Text>
       </HStack>
 
-      <Avatar src={isMe.avatar} name={isMe.name} size="2xl"></Avatar>
+      <Avatar
+        src={profileData && profileData.avatar}
+        name={profileData && profileData.name}
+        size="2xl"
+      ></Avatar>
 
       <Heading size="md" mt={5}>
-        {isMe && isMe.name}
+        {profileData && profileData.name}
       </Heading>
 
       <Box px={8} w="full">
         <Divider mt={6} color="gray.100" />
       </Box>
       <VStack overflowY="auto" mt="2rem" w="full">
-        {!isMe.avatar && (
+        {!profileData.avatar && (
           <Box px={8} w="full" justify="center">
             <Button
               variant="outline"
@@ -62,7 +62,7 @@ const ChatFiles = () => {
               size="lg"
               width="full"
               mt="0.9rem"
-              isLoading={isLoading}
+              isLoading={isUploading}
               loadingText="Uploading.."
             >
               Change Profile
@@ -82,11 +82,11 @@ const ChatFiles = () => {
               display="block"
               left="0"
               bottom="12"
-              onChange={e => setImg(e.target.files[0])}
+              onChange={e => setProfileImg(e.target.files[0])}
             />
           </Box>
         )}
-        {isMe.avatar && (
+        {profileData.avatar && (
           <Box px={8} w="full" mb="2.5rem" justify="center">
             <Button
               variant="outline"
@@ -118,16 +118,7 @@ const ChatFiles = () => {
               onClick={handleDark}
             />
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={async () => {
-              await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-                isOnline: false,
-              });
-              signOut(auth);
-            }}
-          >
+          <Button variant="outline" size="sm" onClick={handleSignOut}>
             Log Out
             <IconButton
               ml="1em"

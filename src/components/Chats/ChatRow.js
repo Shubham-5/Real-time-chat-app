@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, Heading, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Flex, Heading, Text, VStack } from '@chakra-ui/react';
 import UserAvatar from './UserAvatar';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';

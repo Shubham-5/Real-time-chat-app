@@ -6,7 +6,13 @@ import ChatHistoryDrawer from '../components/Chats/ChatHistoryDrawer';
 import ChatFilesDrawer from '../components/Profile/ChatFilesDrawer';
 import { HStack, Flex, useDisclosure } from '@chakra-ui/react';
 import { auth, db, storage } from '../firebase/Firebase';
-import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import { signOut } from 'firebase/auth';
+import {
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  deleteObject,
+} from 'firebase/storage';
 import {
   collection,
   query,
@@ -40,11 +46,16 @@ const Home = () => {
   const [messages, setMessages] = useState([]);
   const [img, setImg] = useState('');
 
+  //profile page states
+  const [profileData, setProfileData] = useState('');
+  const [profileImg, setProfileImg] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+
   //current user id
   const isMe = auth.currentUser.uid;
 
-  //chat row component code ----
   useEffect(() => {
+    //chat row component code for getting friends  ----
     const userRef = collection(db, 'users');
     //query object
     const q = query(userRef, where('uid', 'not-in', [isMe]));
@@ -62,6 +73,72 @@ const Home = () => {
       unsubscribe();
     };
   }, [isMe]);
+
+  useEffect(() => {
+    //  ---- profile page code ---
+
+    //profile data of user
+    getDoc(doc(db, 'users', isMe)).then(docSnap => {
+      if (docSnap.exists) {
+        setProfileData(docSnap.data());
+      }
+    });
+    if (profileImg) {
+      // Upload file and metadata to the object
+      const uploadImg = async () => {
+        const imgRef = ref(
+          storage,
+          `avatar/${new Date().getTime()} - ${profileImg.name}`
+        );
+        setIsUploading(true);
+        try {
+          if (profileData.avatarPath) {
+            await deleteObject(ref(storage, profileData.avatarPath));
+          }
+          const snap = await uploadBytes(imgRef, profileImg);
+          const url = await getDownloadURL(ref(storage, snap.ref.fullPath));
+          await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+            avatar: url,
+            avatarPath: snap.ref.fullPath,
+          });
+          setIsUploading(false);
+          setProfileImg('');
+        } catch (err) {
+          console.log(err.message);
+        }
+      };
+
+      uploadImg();
+    }
+  }, [profileImg, profileData.avatarPath, isMe]);
+
+  //----- profile page code ------
+
+  //signOut function
+
+  const handleSignOut = async () => {
+    await updateDoc(doc(db, 'users', isMe), {
+      isOnline: false,
+    });
+    await signOut(auth);
+  };
+
+  //delete image from storage
+  const deleteImage = async () => {
+    try {
+      const confirm = window.confirm('Delete avatar?');
+      if (confirm) {
+        await deleteObject(ref(storage, profileData.avatarPath));
+
+        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+          avatar: '',
+          avatarPath: '',
+        });
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   //chat -- chathistory component code -------
 
@@ -133,7 +210,7 @@ const Home = () => {
     setText('');
     setImg('');
   };
-  //----- end here ------
+
   return (
     <>
       <HStack h="100vh" spacing={0}>
@@ -170,7 +247,14 @@ const Home = () => {
           display={{ base: 'none', lg: 'flex' }}
           w="full"
         >
-          <ChatFiles />
+          <ChatFiles
+            isMe={isMe}
+            isUploading={isUploading}
+            deleteImage={deleteImage}
+            setProfileImg={setProfileImg}
+            profileData={profileData}
+            handleSignOut={handleSignOut}
+          />
         </Flex>
         <ChatHistoryDrawer
           isOpen={isChatHistoryOpen}
@@ -178,7 +262,16 @@ const Home = () => {
           onlineFriends={onlineFriends}
           selectFriend={selectFriend}
         />
-        <ChatFilesDrawer isOpen={isChatFilesOpen} onClose={onChatFilesClose} />
+        <ChatFilesDrawer
+          isMe={isMe}
+          setProfileImg={setProfileImg}
+          profileData={profileData}
+          deleteImage={deleteImage}
+          isUploading={isUploading}
+          isOpen={isChatFilesOpen}
+          onClose={onChatFilesClose}
+          handleSignOut={handleSignOut}
+        />
       </HStack>
     </>
   );
