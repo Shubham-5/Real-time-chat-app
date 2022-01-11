@@ -26,12 +26,13 @@ export function AuthProvider({ children }) {
   };
   useEffect(() => {
     //getting data of current user
-    getDoc(doc(db, 'users', auth.currentUser.uid)).then(docSnap => {
-      if (docSnap.exists) {
-        setIsMe(docSnap.data());
-      }
-    });
-
+    if (auth) {
+      getDoc(doc(db, 'users', auth.currentUser.uid)).then(docSnap => {
+        if (docSnap.exists) {
+          setIsMe(docSnap.data());
+        }
+      });
+    }
     if (img) {
       // Upload file and metadata to the object
       const uploadImg = async () => {
