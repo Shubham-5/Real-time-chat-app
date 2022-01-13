@@ -12,6 +12,7 @@ const ChatFilesDrawer = ({
   onClose,
   isUploading,
   profileData,
+  handleSignOut,
   deleteImage,
   setProfileImg,
 }) => {
@@ -27,6 +28,7 @@ const ChatFilesDrawer = ({
             darkIcon={darkIcon}
             isUploading={isUploading}
             profileData={profileData}
+            handleSignOut={handleSignOut}
             setProfileImg={setProfileImg}
             deleteImage={deleteImage}
           />

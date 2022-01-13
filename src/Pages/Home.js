@@ -50,6 +50,7 @@ const Home = () => {
   const [profileData, setProfileData] = useState('');
   const [profileImg, setProfileImg] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploading2, setIsUploading2] = useState(false);
 
   //current user id
   const isMe = auth.currentUser.uid;
@@ -65,13 +66,11 @@ const Home = () => {
       querySnap.forEach(doc => {
         users.push(doc.data());
       });
-
       setOnlineFriends(users);
+      return () => {
+        unsubscribe();
+      };
     });
-
-    return () => {
-      unsubscribe();
-    };
   }, [isMe]);
 
   useEffect(() => {
@@ -117,10 +116,16 @@ const Home = () => {
   //signOut function
 
   const handleSignOut = async () => {
-    await updateDoc(doc(db, 'users', isMe), {
-      isOnline: false,
-    });
-    await signOut(auth);
+    try {
+      await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+        isOnline: false,
+      });
+      await signOut(auth);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // Sign-out successful.
   };
 
   //delete image from storage
@@ -177,6 +182,7 @@ const Home = () => {
 
     // sending images
     let url;
+    setIsUploading2(true);
     if (img) {
       const imgRef = ref(
         storage,
@@ -186,6 +192,7 @@ const Home = () => {
       const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
       url = dlUrl;
     }
+    setIsUploading2(false);
 
     // adding messages to firestore
     if (text || img) {
@@ -237,6 +244,8 @@ const Home = () => {
             setText={setText}
             text={text}
             setImg={setImg}
+            img={img}
+            isUploading2={isUploading2}
             messages={messages}
           />
         </Flex>
@@ -268,9 +277,9 @@ const Home = () => {
           profileData={profileData}
           deleteImage={deleteImage}
           isUploading={isUploading}
+          handleSignOut={handleSignOut}
           isOpen={isChatFilesOpen}
           onClose={onChatFilesClose}
-          handleSignOut={handleSignOut}
         />
       </HStack>
     </>

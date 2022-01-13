@@ -9,6 +9,8 @@ import {
   StatLabel,
   StatNumber,
   useColorModeValue,
+  useToast,
+  toast,
 } from '@chakra-ui/react';
 
 import { HiChat } from 'react-icons/hi';
@@ -16,7 +18,6 @@ import { FaPaperPlane } from 'react-icons/fa';
 import { MdAccountCircle, MdPermMedia } from 'react-icons/md';
 
 import ChatBubble from './ChatBubble';
-
 const Chat = ({
   onChatHistoryOpen,
   onChatFilesOpen,
@@ -26,9 +27,11 @@ const Chat = ({
   handleSubmit,
   messages,
   setImg,
+  img,
+  isUploading2,
 }) => {
   const bgColor = useColorModeValue('', 'gray.800');
-
+  const toast = useToast();
   return (
     <Flex w="full" flexDirection="column" bg={bgColor}>
       <HStack px={4} py={4} borderBottomWidth={1}>
@@ -88,7 +91,17 @@ const Chat = ({
             }}
           >
             <Input
-              onChange={e => setImg(e.target.files[0])}
+              onChange={e => {
+                setImg(e.target.files[0]);
+
+                toast({
+                  description: `${img.name} selected, tap to send`,
+                  status: 'success',
+                  duration: 4000,
+                  isClosable: true,
+                  position: 'top',
+                });
+              }}
               type="file"
               id="img"
               accept="image/*"
@@ -105,6 +118,7 @@ const Chat = ({
               aria-label="Send images"
               variant="ghost"
               pointerEvents="none"
+              isLoading={isUploading2}
               icon={<MdPermMedia />}
             />
           </Button>

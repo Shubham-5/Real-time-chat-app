@@ -14,7 +14,7 @@ const ChatRow = ({ selectFriend, friend }) => {
     let unsub = onSnapshot(doc(db, 'lastMsg', id), doc => {
       setUnreadData(doc.data());
     });
-    return () => unsub;
+    return () => unsub();
   }, [id]);
 
   return (
