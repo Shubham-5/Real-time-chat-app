@@ -29,15 +29,7 @@ const ChatBubble = ({ message }) => {
         borderBottomRightRadius={message.media ? 5 : bottomRightRadius}
       >
         {message.media ? (
-          <Image
-            src={message.media}
-            height="100%"
-            maxH="400px"
-            width="100%"
-            // boxSize="200px"
-            // objectFit="cover"
-            alt={message.text}
-          />
+          <Image src={message.media} alt={message.text} />
         ) : null}
         {message.text}
       </Box>

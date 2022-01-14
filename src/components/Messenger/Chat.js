@@ -1,7 +1,8 @@
+import React, { useEffect, useState } from 'react';
+
 import {
   Button,
   Flex,
-  FormControl,
   HStack,
   IconButton,
   Input,
@@ -10,26 +11,38 @@ import {
   StatNumber,
   useColorModeValue,
   useToast,
-  toast,
+  VStack,
+  Heading,
+  Text,
 } from '@chakra-ui/react';
-
+import Moment from 'react-moment';
 import { HiChat } from 'react-icons/hi';
 import { FaPaperPlane } from 'react-icons/fa';
 import { MdAccountCircle, MdPermMedia } from 'react-icons/md';
-
 import ChatBubble from './ChatBubble';
+import UserAvatar from '../Chats/UserAvatar';
 const Chat = ({
   onChatHistoryOpen,
   onChatFilesOpen,
+  onlineFriends,
+  selectFriend,
   chat,
   setText,
   text,
   handleSubmit,
   messages,
   setImg,
-  img,
   isUploading2,
 }) => {
+  const [search, setSearch] = useState('');
+  const [friends, setFriends] = useState([]);
+  useEffect(() => {
+    const filterFriends = onlineFriends.filter(
+      data => data.name.toLowerCase() === search
+    );
+    setFriends(filterFriends);
+  }, [onlineFriends, search]);
+
   const bgColor = useColorModeValue('', 'gray.800');
   const toast = useToast();
   return (
@@ -41,7 +54,15 @@ const Chat = ({
           icon={<HiChat />}
           aria-label="Toggle Chat History Drawer"
         />
-        <Input variant="filled" rounded="full" placeholder="Search friends" />
+
+        <Input
+          variant="filled"
+          rounded="full"
+          value={search}
+          placeholder="Search friends"
+          onChange={e => setSearch(e.target.value)}
+        />
+
         <IconButton
           onClick={onChatFilesOpen}
           display={{ base: 'inherit', lg: 'none' }}
@@ -49,6 +70,44 @@ const Chat = ({
           aria-label="Toggle Profile Drawer"
         />
       </HStack>
+
+      {/* input search friend start here---- */}
+      {friends.map(friend => (
+        <>
+          <Flex
+            key={friend.uid}
+            py={1}
+            px={8}
+            w="full"
+            alignItems="center"
+            borderBottomWidth={1}
+            style={{ transition: 'background 300ms' }}
+            _hover={{ opacity: '0.9', cursor: 'pointer' }}
+            onClick={() => {
+              selectFriend(friend);
+              setSearch('');
+            }}
+          >
+            <UserAvatar name={friend.name} friend={friend} />
+            <VStack
+              overflow="hidden"
+              flex={1}
+              ml={3}
+              spacing={0}
+              alignItems="flex-start"
+            >
+              <Heading fontSize={12} w="full">
+                {friend && friend.name}
+              </Heading>
+            </VStack>
+            <Text ml={3} fontSize="xs" color="gray.500">
+              <Moment fromNow>{friend.createdAt.toDate()}</Moment>
+            </Text>
+          </Flex>
+        </>
+      ))}
+      {/* input search friend end---- */}
+
       <Flex px={6} overflowY="auto" flexDirection="column" flex={1}>
         <Stat mt={6}>
           <StatLabel color="gray.500">Chatting with</StatLabel>
@@ -64,18 +123,14 @@ const Chat = ({
       </Flex>
       <form onSubmit={handleSubmit}>
         <Flex pl={4} pr={2} py={2} borderTopWidth={1}>
-          <FormControl isRequired>
-            <Input
-              variant="unstyled"
-              placeholder="Type your message"
-              value={text}
-              isDisabled={!chat}
-              display="block"
-              top="4px"
-              onChange={e => setText(e.target.value)}
-              onSubmit={handleSubmit}
-            />
-          </FormControl>
+          <Input
+            variant="unstyled"
+            placeholder="Type your message"
+            value={text}
+            isDisabled={!chat}
+            onChange={e => setText(e.target.value)}
+            onSubmit={handleSubmit}
+          />
 
           <Button
             colorScheme="blue"
@@ -87,7 +142,7 @@ const Chat = ({
             _hover={{ bg: '' }}
             _active={{
               bg: '',
-              borderColor: '#',
+              borderColor: '',
             }}
           >
             <Input
@@ -95,7 +150,7 @@ const Chat = ({
                 setImg(e.target.files[0]);
 
                 toast({
-                  description: `${img.name} selected, tap to send`,
+                  description: 'img selected, click send button',
                   status: 'success',
                   duration: 4000,
                   isClosable: true,
@@ -122,7 +177,7 @@ const Chat = ({
               icon={<MdPermMedia />}
             />
           </Button>
-          {/* </InputGroup> */}
+
           <IconButton
             colorScheme="blue"
             aria-label="Send message"

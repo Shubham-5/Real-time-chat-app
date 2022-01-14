@@ -15,17 +15,15 @@ import {
   FormLabel,
   InputRightElement,
   Text,
-  IconButton,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { FaEye, FaEyeSlash, FaSun, FaMoon } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { auth, db } from '../firebase/Firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { updateDoc, doc, setDoc, Timestamp } from 'firebase/firestore';
-import { useCustomHook } from '../context/useCustomHook';
 
 const Login = ({ setUser }) => {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -36,7 +34,7 @@ const Login = ({ setUser }) => {
   const [password, setPassword] = useState('');
 
   const toast = useToast();
-  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
+
   const signInTextColor = useColorModeValue('blue', 'gray');
 
   //handling login function
@@ -119,15 +117,6 @@ const Login = ({ setUser }) => {
         <Heading size="lg" color="gray">
           {isSignIn ? 'SIGN IN' : 'SIGN UP'}
         </Heading>
-        <Box onClick={handleDark}>
-          <IconButton
-            variant="ghost"
-            size="sm"
-            icon={darkIcon ? <FaSun /> : <FaMoon />}
-            aria-label="darkmode"
-            onClick={toggleColorMode}
-          />
-        </Box>
       </HStack>
 
       <Box px={8} w="full">

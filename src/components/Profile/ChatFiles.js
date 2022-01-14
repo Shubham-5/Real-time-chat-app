@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Flex,
   HStack,
@@ -11,29 +11,31 @@ import {
   Button,
   IconButton,
   Input,
+  useColorMode,
 } from '@chakra-ui/react';
 import { FaSun, FaMoon, FaSignOutAlt, FaUpload } from 'react-icons/fa';
 import moment from 'moment';
 import { MdAdd, MdDeleteForever } from 'react-icons/md';
-import { useCustomHook } from '../../context/useCustomHook';
 
 const ChatFiles = ({
   profileData,
   setProfileImg,
   isUploading,
   deleteImage,
-
   handleSignOut,
 }) => {
-  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
-
-  // //joining date of user formating
+  //joining date of user formating
   if (profileData) {
     var accountCreatedDate = moment(profileData.createdAt.toDate()).format(
       'MMM DD YYYY h:mm A'
     );
   }
+  const [darkIcon, setDarkIcon] = useState(false);
+  const { toggleColorMode } = useColorMode();
 
+  const handleDark = () => {
+    setDarkIcon(!darkIcon);
+  };
   return (
     <Flex h="full" flexDirection="column" alignItems="center" w="full" pt={8}>
       <HStack justify="center" w="full" px={8} mb={8}>
@@ -105,12 +107,12 @@ const ChatFiles = ({
             </Button>
           </Box>
         )}
-        <Box px={8} w="full">
-          <Divider color="gray.100" />
-        </Box>
+
         <HStack px={8} w="full" justifyContent="space-between">
-          <Button variant="disabled" onClick={toggleColorMode}>
+          <Button variant="outline" size="sm" onClick={toggleColorMode}>
+            dark mode
             <IconButton
+              ml="1em"
               size="sm"
               variant="ghost"
               icon={darkIcon ? <FaSun /> : <FaMoon />}

@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { auth } from './firebase/Firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Spinner, VStack } from '@chakra-ui/react';
-import { AuthProvider } from './context/useCustomHook';
-
 import Login from './Pages/Login';
-
 import Home from './Pages/Home';
 
 function App() {
@@ -29,13 +26,7 @@ function App() {
       </VStack>
     );
   }
-  return (
-    <>
-      <AuthProvider>
-        {user ? <Home /> : <Login setUser={setUser} />}
-      </AuthProvider>
-    </>
-  );
+  return <>{user ? <Home /> : <Login setUser={setUser} />}</>;
 }
 
 export default App;

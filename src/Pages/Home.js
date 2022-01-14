@@ -240,6 +240,9 @@ const Home = () => {
             onChatHistoryOpen={onChatHistoryOpen}
             onChatFilesOpen={onChatFilesOpen}
             chat={chat}
+            selectFriend={selectFriend}
+            onlineFriends={onlineFriends}
+            onChatHistoryClose={onChatHistoryClose}
             handleSubmit={handleSubmit}
             setText={setText}
             text={text}

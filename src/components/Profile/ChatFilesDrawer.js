@@ -5,7 +5,6 @@ import {
   DrawerOverlay,
 } from '@chakra-ui/react';
 import ChatFiles from './ChatFiles';
-import { useCustomHook } from '../../context/useCustomHook';
 
 const ChatFilesDrawer = ({
   isOpen,
@@ -16,16 +15,12 @@ const ChatFilesDrawer = ({
   deleteImage,
   setProfileImg,
 }) => {
-  const { toggleColorMode, handleDark, darkIcon } = useCustomHook();
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent pt={8}>
           <DrawerCloseButton />
           <ChatFiles
-            toggleColorMode={toggleColorMode}
-            handleDark={handleDark}
-            darkIcon={darkIcon}
             isUploading={isUploading}
             profileData={profileData}
             handleSignOut={handleSignOut}
