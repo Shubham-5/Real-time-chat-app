@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import {
   Button,
   Flex,
@@ -150,7 +149,7 @@ const Chat = ({
                 setImg(e.target.files[0]);
 
                 toast({
-                  description: 'img selected, click send button',
+                  description: 'img added, click a send button',
                   status: 'success',
                   duration: 4000,
                   isClosable: true,

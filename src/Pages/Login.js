@@ -114,13 +114,13 @@ const Login = ({ setUser }) => {
       width="100vw"
     >
       <HStack justify="center" my="30px" w="md" px={8}>
-        <Heading size="lg" color="gray">
-          {isSignIn ? 'SIGN IN' : 'SIGN UP'}
+        <Heading size="lg" color="teal">
+          Chat App
         </Heading>
       </HStack>
 
       <Box px={8} w="full">
-        <Divider mt="12" color="gray.100" />
+        <Divider color="gray.100" />
       </Box>
       <VStack spacing={6} overflowY="auto" w="md">
         <VStack px={8} w="full" mt={6} justifyContent="space-between">
