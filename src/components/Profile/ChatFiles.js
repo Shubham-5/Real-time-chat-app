@@ -106,36 +106,38 @@ const ChatFiles = ({
         <Divider mt={6} color="gray.100" />
       </Box>
       <VStack overflowY="auto" mt="2rem" w="full">
-        <Box px={8} w="full" justify="center">
-          <Button
-            variant="outline"
-            colorScheme="telegram"
-            size="lg"
-            width="full"
-            mt="0.9rem"
-            isLoading={isUploading}
-            loadingText="Uploading.."
-          >
-            Change Profile Picture
-            <IconButton
-              ml="9px"
+        {!profileData.avatar && (
+          <Box px={8} w="full" justify="center">
+            <Button
+              variant="outline"
+              colorScheme="telegram"
+              size="lg"
+              width="full"
+              mt="0.9rem"
+              isLoading={isUploading}
+              loadingText="Uploading.."
+            >
+              Change Profile Picture
+              <IconButton
+                ml="9px"
+                variant="ghost"
+                size="sm"
+                icon={<FaUpload />}
+              />
+            </Button>
+            <Input
+              type="file"
+              accept="image/*"
+              id="photo"
               variant="ghost"
-              size="sm"
-              icon={<FaUpload />}
+              opacity="0"
+              display="block"
+              left="0"
+              bottom="12"
+              onChange={e => setProfileImg(e.target.files[0])}
             />
-          </Button>
-          <Input
-            type="file"
-            accept="image/*"
-            id="photo"
-            variant="ghost"
-            opacity="0"
-            display="block"
-            left="0"
-            bottom="12"
-            onChange={e => setProfileImg(e.target.files[0])}
-          />
-        </Box>
+          </Box>
+        )}
 
         {profileData.avatar && (
           <Box px={8} w="full" mb="2.5rem" justify="center">
