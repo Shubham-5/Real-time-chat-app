@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ChatHistorySidebar from '../components/Chats/ChatHistorySidebar';
 import Chat from '../components/Messenger/Chat';
 import ChatFiles from '../components/Profile/ChatFiles';
 import ChatHistoryDrawer from '../components/Chats/ChatHistoryDrawer';
 import ChatFilesDrawer from '../components/Profile/ChatFilesDrawer';
-import { HStack, Flex, useDisclosure } from '@chakra-ui/react';
+import { HStack, Flex, useDisclosure, useToast } from '@chakra-ui/react';
 import { auth, db, storage } from '../firebase/Firebase';
 import { signOut } from 'firebase/auth';
 import {
@@ -40,6 +40,8 @@ const Home = () => {
     onClose: onChatFilesClose,
   } = useDisclosure();
 
+  const toast = useToast();
+
   const [onlineFriends, setOnlineFriends] = useState([]);
   const [chat, setChat] = useState('');
   const [text, setText] = useState('');
@@ -51,6 +53,7 @@ const Home = () => {
   const [profileImg, setProfileImg] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [isUploading2, setIsUploading2] = useState(false);
+  const [newName, setNewName] = useState('');
 
   //current user id
   const isMe = auth.currentUser.uid;
@@ -72,6 +75,35 @@ const Home = () => {
       };
     });
   }, [isMe]);
+
+  const updateName = useCallback(async () => {
+    try {
+      await updateDoc(doc(db, 'users', isMe), {
+        name: newName,
+      });
+      getDoc(doc(db, 'users', isMe)).then(docSnap => {
+        if (docSnap.exists) {
+          setProfileData(docSnap.data());
+        }
+      });
+      setNewName('');
+      toast({
+        description: 'Name updated',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+    } catch (error) {
+      toast({
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      });
+    }
+  }, [isMe, newName, toast]);
 
   useEffect(() => {
     //  ---- profile page code ---
@@ -262,9 +294,12 @@ const Home = () => {
           <ChatFiles
             isMe={isMe}
             isUploading={isUploading}
+            setNewName={setNewName}
+            newName={newName}
             deleteImage={deleteImage}
             setProfileImg={setProfileImg}
             profileData={profileData}
+            updateName={updateName}
             handleSignOut={handleSignOut}
           />
         </Flex>
@@ -279,6 +314,9 @@ const Home = () => {
           setProfileImg={setProfileImg}
           profileData={profileData}
           deleteImage={deleteImage}
+          setNewName={setNewName}
+          newName={newName}
+          updateName={updateName}
           isUploading={isUploading}
           handleSignOut={handleSignOut}
           isOpen={isChatFilesOpen}

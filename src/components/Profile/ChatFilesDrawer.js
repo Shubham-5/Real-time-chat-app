@@ -14,6 +14,9 @@ const ChatFilesDrawer = ({
   handleSignOut,
   deleteImage,
   setProfileImg,
+  setNewName,
+  newName,
+  updateName,
 }) => {
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
@@ -26,6 +29,9 @@ const ChatFilesDrawer = ({
             handleSignOut={handleSignOut}
             setProfileImg={setProfileImg}
             deleteImage={deleteImage}
+            setNewName={setNewName}
+            newName={newName}
+            updateName={updateName}
           />
         </DrawerContent>
       </DrawerOverlay>

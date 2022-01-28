@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Flex,
@@ -35,12 +35,15 @@ const Chat = ({
 }) => {
   const [search, setSearch] = useState('');
   const [friends, setFriends] = useState([]);
-  useEffect(() => {
-    const filterFriends = onlineFriends.filter(
-      data => data.name.toLowerCase() === search
-    );
-    setFriends(filterFriends);
-  }, [onlineFriends, search]);
+
+  const searchFriend = event => {
+    if (event.key === 'Enter') {
+      const filterFriends = onlineFriends.filter(
+        data => data.name.toLowerCase() === search
+      );
+      setFriends(filterFriends);
+    }
+  };
 
   const bgColor = useColorModeValue('', 'gray.800');
   const toast = useToast();
@@ -59,6 +62,7 @@ const Chat = ({
           rounded="full"
           value={search}
           placeholder="Search friends"
+          onKeyPress={searchFriend}
           onChange={e => setSearch(e.target.value)}
         />
 
