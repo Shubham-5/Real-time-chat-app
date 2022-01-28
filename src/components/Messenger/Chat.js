@@ -75,40 +75,42 @@ const Chat = ({
       </HStack>
 
       {/* input search friend start here---- */}
-      {friends.map(friend => (
-        <>
-          <Flex
-            key={friend.uid}
-            py={1}
-            px={8}
-            w="full"
-            alignItems="center"
-            borderBottomWidth={1}
-            style={{ transition: 'background 300ms' }}
-            _hover={{ opacity: '0.9', cursor: 'pointer' }}
-            onClick={() => {
-              selectFriend(friend);
-              setSearch('');
-            }}
-          >
-            <UserAvatar name={friend.name} friend={friend} />
-            <VStack
-              overflow="hidden"
-              flex={1}
-              ml={3}
-              spacing={0}
-              alignItems="flex-start"
+      {friends &&
+        friends.map(friend => (
+          <>
+            <Flex
+              key={friend.uid}
+              py={1}
+              px={8}
+              w="full"
+              alignItems="center"
+              borderBottomWidth={1}
+              style={{ transition: 'background 300ms' }}
+              _hover={{ opacity: '0.9', cursor: 'pointer' }}
+              onClick={() => {
+                selectFriend(friend);
+                setSearch('');
+                setFriends('');
+              }}
             >
-              <Heading fontSize={12} w="full">
-                {friend && friend.name}
-              </Heading>
-            </VStack>
-            <Text ml={3} fontSize="xs" color="gray.500">
-              <Moment fromNow>{friend.createdAt.toDate()}</Moment>
-            </Text>
-          </Flex>
-        </>
-      ))}
+              <UserAvatar name={friend.name} friend={friend} />
+              <VStack
+                overflow="hidden"
+                flex={1}
+                ml={3}
+                spacing={0}
+                alignItems="flex-start"
+              >
+                <Heading fontSize={12} w="full">
+                  {friend && friend.name}
+                </Heading>
+              </VStack>
+              <Text ml={3} fontSize="xs" color="gray.500">
+                <Moment fromNow>{friend.createdAt.toDate()}</Moment>
+              </Text>
+            </Flex>
+          </>
+        ))}
       {/* input search friend end---- */}
 
       <Flex px={6} overflowY="auto" flexDirection="column" flex={1}>
