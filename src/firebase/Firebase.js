@@ -5,13 +5,13 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDu6RAo2PxnSItC61UIH0CGGZ_26HSRDpg',
-  authDomain: 'realtime-chat-app-12dab.firebaseapp.com',
-  databaseURL: 'https://realtime-chat-app-12dab-default-rtdb.firebaseio.com/',
-  projectId: 'realtime-chat-app-12dab',
-  storageBucket: 'realtime-chat-app-12dab.appspot.com',
-  messagingSenderId: '284964247975',
-  appId: '1:284964247975:web:9d1b20617d15c82e57be82',
+  apiKey: process.env.REACT_APP_FB_API,
+  authDomain: process.env.REACT_APP_FB_DOMAIN,
+  databaseURL: process.env.REACT_APP_FB_DB_URL,
+  projectId: process.env.REACT_APP_FB_PROJECT,
+  storageBucket: process.env.REACT_APP_FB_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FB_SENDER,
+  appId: process.env.REACT_APP_FB_APP,
 };
 
 // Initialize Firebase
