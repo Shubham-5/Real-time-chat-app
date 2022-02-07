@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Flex,
   HStack,
@@ -24,7 +24,7 @@ import {
 } from '@chakra-ui/react';
 import { FaSun, FaMoon, FaSignOutAlt, FaUpload } from 'react-icons/fa';
 import moment from 'moment';
-import { MdAdd, MdDeleteForever, MdCreate } from 'react-icons/md';
+import { MdDeleteForever, MdCreate, MdAddAPhoto } from 'react-icons/md';
 
 const ChatFiles = ({
   profileData,
@@ -50,6 +50,8 @@ const ChatFiles = ({
     setDarkIcon(!darkIcon);
   };
 
+  const inputRef = useRef(null);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -62,6 +64,25 @@ const ChatFiles = ({
         name={profileData && profileData.name}
         size="2xl"
       ></Avatar>
+      <IconButton
+        onClick={() => inputRef.current.click()}
+        colorScheme="gray"
+        border="1px"
+        borderRadius="30px"
+        opacity="0.9"
+        position="relative"
+        bottom="20px"
+        isLoading={isUploading}
+        icon={<MdAddAPhoto />}
+      />
+      <Input
+        display="none"
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        id="photo"
+        onChange={e => setProfileImg(e.target.files[0])}
+      />
 
       <Heading ml="15px" size="md" mt={5}>
         {profileData && profileData.name}
@@ -106,7 +127,7 @@ const ChatFiles = ({
         <Divider mt={6} color="gray.100" />
       </Box>
       <VStack overflowY="auto" mt="2rem" w="full">
-        {!profileData.avatar && (
+        {/* {!profileData.avatar && (
           <Box px={8} w="full" justify="center">
             <Button
               variant="outline"
@@ -125,17 +146,7 @@ const ChatFiles = ({
                 icon={<FaUpload />}
               />
             </Button>
-            <Input
-              type="file"
-              accept="image/*"
-              id="photo"
-              variant="ghost"
-              opacity="0"
-              display="block"
-              left="0"
-              bottom="12"
-              onChange={e => setProfileImg(e.target.files[0])}
-            />
+           
           </Box>
         )}
 
@@ -157,7 +168,7 @@ const ChatFiles = ({
               />
             </Button>
           </Box>
-        )}
+        )} */}
 
         <HStack px={8} w="full" justifyContent="space-between">
           <Box variant="outline" size="sm" onClick={toggleColorMode}>

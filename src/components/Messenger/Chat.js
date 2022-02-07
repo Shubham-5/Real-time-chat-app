@@ -54,7 +54,7 @@ const Chat = ({
           onClick={onChatHistoryOpen}
           display={{ base: 'inherit', lg: 'none' }}
           icon={<HiChat />}
-          aria-label="Toggle Chat History Drawer"
+          aria-label="Toggle Chat List Drawer"
         />
 
         <Input

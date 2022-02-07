@@ -107,182 +107,186 @@ const Login = ({ setUser }) => {
   const handleSignIn = () => setIsSignIn(!isSignIn);
 
   return (
-    <Flex
-      flexDirection="column"
-      alignItems="center"
-      height="100vh"
-      width="100vw"
-    >
-      <HStack justify="center" my="30px" w="md" px={8}>
-        <Heading size="lg" color="teal">
-          Chat App
-        </Heading>
-      </HStack>
-
-      <Box px={8} w="full">
-        <Divider color="gray.100" />
-      </Box>
-      <VStack spacing={6} overflowY="auto" w="md">
-        <VStack px={8} w="full" mt={6} justifyContent="space-between">
-          <Box my={50} textAlign="left">
-            {/* ----- Login Form Start here ---- */}
-
-            {isSignIn && (
-              <form onSubmit={handleSubmitLogin}>
-                <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    type="email"
-                    name="email"
-                    value={email}
-                    size="lg"
-                    placeholder="enter your email."
-                    onChange={e => setEmail(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl isRequired mb={5} mt={5}>
-                  <FormLabel>Password</FormLabel>
-                  <InputGroup>
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      size="lg"
-                      value={password}
-                      name="password"
-                      placeholder="********"
-                      onChange={e => setPassword(e.target.value)}
-                    />
-
-                    <InputRightElement mt="4px" width="3rem">
-                      <Button
-                        opacity="0.7"
-                        h="1.5rem"
-                        size="sm"
-                        onClick={handlePasswordVisibility}
-                      >
-                        {showPassword ? <FaEye /> : <FaEyeSlash />}
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-                <Button
-                  width="full"
-                  mt={4}
-                  size="lg"
-                  variant="solid"
-                  colorScheme="cyan"
-                  type="submit"
-                >
-                  {isLoading ? (
-                    <CircularProgress
-                      isIndeterminate
-                      size="24px"
-                      color="teal"
-                    />
-                  ) : (
-                    'Sign IN'
-                  )}
-                </Button>
-              </form>
-            )}
-
-            {/* ----- Register Form Start here ---- */}
-
-            {!isSignIn && (
-              <form onSubmit={handleSubmitRegister}>
-                <FormControl isRequired mb={5}>
-                  <FormLabel>Name</FormLabel>
-                  <Input
-                    type="text"
-                    name="name"
-                    value={name}
-                    size="lg"
-                    placeholder="enter your name."
-                    onChange={e => setName(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    type="email"
-                    name="email"
-                    value={email}
-                    size="lg"
-                    placeholder="enter your email."
-                    onChange={e => setEmail(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl isRequired mt={5}>
-                  <FormLabel>Password</FormLabel>
-                  <InputGroup>
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      size="lg"
-                      value={password}
-                      name="password"
-                      placeholder="********"
-                      mb={4}
-                      onChange={e => setPassword(e.target.value)}
-                    />
-
-                    <InputRightElement mt="4px" width="3rem">
-                      <Button
-                        opacity="0.7"
-                        h="1.5rem"
-                        size="sm"
-                        onClick={handlePasswordVisibility}
-                      >
-                        {showPassword ? <FaEye /> : <FaEyeSlash />}
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-                <Button
-                  width="full"
-                  mt={4}
-                  size="lg"
-                  colorScheme="cyan"
-                  variant="solid"
-                  type="submit"
-                >
-                  {isLoading ? (
-                    <CircularProgress
-                      isIndeterminate
-                      size="24px"
-                      color="teal"
-                    />
-                  ) : (
-                    ' Sign UP  '
-                  )}
-                </Button>
-              </form>
-            )}
-          </Box>
-        </VStack>
-
-        {/* ------- form end up here ----- */}
+    <>
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        height="100vh"
+        width="100vw"
+      >
+        <HStack justify="center" my="30px" w="md" px={8}>
+          <Heading size="lg" color="teal">
+            Chat App
+          </Heading>
+        </HStack>
 
         <Box px={8} w="full">
           <Divider color="gray.100" />
         </Box>
-        <HStack px={20} w="full" justifyContent="space-between">
-          <Text size="sm" fontSize="15px    ">
-            {isSignIn ? "Haven't Created Account ?" : 'Already Have Account ?'}
-          </Text>
-          <Button
-            fontWeight="Bold"
-            variant="link"
-            size="sm"
-            _focus={{
-              boxShadow: '0 0 0px 0px ',
-            }}
-            color={signInTextColor}
-            onClick={handleSignIn}
-          >
-            {!isSignIn ? 'Sign In' : 'Sign Up'}
-          </Button>
-        </HStack>
-      </VStack>
-    </Flex>
+        <VStack spacing={6} overflowY="auto" w="md">
+          <VStack px={8} w="full" mt={6} justifyContent="space-between">
+            <Box my={50} textAlign="left">
+              {/* ----- Login Form Start here ---- */}
+
+              {isSignIn && (
+                <form onSubmit={handleSubmitLogin}>
+                  <FormControl isRequired>
+                    <FormLabel>Email</FormLabel>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={email}
+                      size="lg"
+                      placeholder="Enter your email."
+                      onChange={e => setEmail(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormControl isRequired mb={5} mt={5}>
+                    <FormLabel>Password</FormLabel>
+                    <InputGroup>
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        size="lg"
+                        value={password}
+                        name="password"
+                        placeholder="********"
+                        onChange={e => setPassword(e.target.value)}
+                      />
+
+                      <InputRightElement mt="4px" width="3rem">
+                        <Button
+                          opacity="0.7"
+                          h="1.5rem"
+                          size="sm"
+                          onClick={handlePasswordVisibility}
+                        >
+                          {showPassword ? <FaEye /> : <FaEyeSlash />}
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+                  <Button
+                    width="full"
+                    mt={4}
+                    size="lg"
+                    variant="solid"
+                    colorScheme="cyan"
+                    type="submit"
+                  >
+                    {isLoading ? (
+                      <CircularProgress
+                        isIndeterminate
+                        size="24px"
+                        color="teal"
+                      />
+                    ) : (
+                      'Sign IN'
+                    )}
+                  </Button>
+                </form>
+              )}
+
+              {/* ----- Register Form Start here ---- */}
+
+              {!isSignIn && (
+                <form onSubmit={handleSubmitRegister}>
+                  <FormControl isRequired mb={5}>
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={name}
+                      size="lg"
+                      placeholder="Enter your name."
+                      onChange={e => setName(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormControl isRequired>
+                    <FormLabel>Email</FormLabel>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={email}
+                      size="lg"
+                      placeholder="Enter your email."
+                      onChange={e => setEmail(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormControl isRequired mt={5}>
+                    <FormLabel>Password</FormLabel>
+                    <InputGroup>
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        size="lg"
+                        value={password}
+                        name="password"
+                        placeholder="********"
+                        mb={4}
+                        onChange={e => setPassword(e.target.value)}
+                      />
+
+                      <InputRightElement mt="4px" width="3rem">
+                        <Button
+                          opacity="0.7"
+                          h="1.5rem"
+                          size="sm"
+                          onClick={handlePasswordVisibility}
+                        >
+                          {showPassword ? <FaEye /> : <FaEyeSlash />}
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+                  <Button
+                    width="full"
+                    mt={4}
+                    size="lg"
+                    colorScheme="cyan"
+                    variant="solid"
+                    type="submit"
+                  >
+                    {isLoading ? (
+                      <CircularProgress
+                        isIndeterminate
+                        size="24px"
+                        color="teal"
+                      />
+                    ) : (
+                      ' Sign UP  '
+                    )}
+                  </Button>
+                </form>
+              )}
+            </Box>
+          </VStack>
+
+          {/* ------- form end up here ----- */}
+
+          <Box px={8} w="full">
+            <Divider color="gray.100" />
+          </Box>
+          <HStack px={20} w="full" justifyContent="space-between">
+            <Text size="sm" fontSize="15px    ">
+              {isSignIn
+                ? "Haven't Created Account ?"
+                : 'Already Have Account ?'}
+            </Text>
+            <Button
+              fontWeight="Bold"
+              variant="link"
+              size="sm"
+              _focus={{
+                boxShadow: '0 0 0px 0px ',
+              }}
+              color={signInTextColor}
+              onClick={handleSignIn}
+            >
+              {!isSignIn ? 'Sign In' : 'Sign Up'}
+            </Button>
+          </HStack>
+        </VStack>
+      </Flex>
+    </>
   );
 };
 
