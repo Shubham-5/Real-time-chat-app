@@ -20,6 +20,7 @@ const ChatHistoryDrawer = ({
           <ChatHistorySidebar
             onlineFriends={onlineFriends}
             selectFriend={selectFriend}
+            onClose={onClose}
           />
         </DrawerContent>
       </DrawerOverlay>

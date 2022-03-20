@@ -13,13 +13,13 @@ import {
 
 import ChatRow from './ChatRow';
 
-const ChatHistorySidebar = ({ onlineFriends, selectFriend }) => {
+const ChatHistorySidebar = ({ onlineFriends, selectFriend, onClose }) => {
   const bgColor = useColorModeValue('', 'gray.800');
 
   return (
     <VStack h="full" alignItems="center" w="full" mt="20px" spacing={6}>
       <HStack px={8} w="full" justifyContent="space-between">
-        <Heading size="xs">Friends </Heading>
+        <Heading size="xs">Friends</Heading>
         <Text fontSize="sm" color="gray.500" fontWeight="semibold">
           {onlineFriends.length}
         </Text>
@@ -42,6 +42,7 @@ const ChatHistorySidebar = ({ onlineFriends, selectFriend }) => {
                   friend={friend}
                   selectFriend={selectFriend}
                   key={friend.uid}
+                  onClose={onClose}
                 />
               ))}
           </ListItem>

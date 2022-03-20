@@ -90,13 +90,13 @@ const ChatFiles = ({
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Enter your name</ModalHeader>
-            <ModalCloseButton />
+            <ModalHeader>Update Username</ModalHeader>
+
             <ModalBody pb={6}>
               <FormControl isRequired>
                 <Input
                   onChange={e => setNewName(e.target.value)}
-                  placeholder="your name"
+                  placeholder="Enter a new name"
                 />
               </FormControl>
             </ModalBody>
@@ -127,49 +127,6 @@ const ChatFiles = ({
         <Divider mt={6} color="gray.100" />
       </Box>
       <VStack overflowY="auto" mt="2rem" w="full">
-        {/* {!profileData.avatar && (
-          <Box px={8} w="full" justify="center">
-            <Button
-              variant="outline"
-              colorScheme="telegram"
-              size="lg"
-              width="full"
-              mt="0.9rem"
-              isLoading={isUploading}
-              loadingText="Uploading.."
-            >
-              Change Profile Picture
-              <IconButton
-                ml="9px"
-                variant="ghost"
-                size="sm"
-                icon={<FaUpload />}
-              />
-            </Button>
-           
-          </Box>
-        )}
-
-        {profileData.avatar && (
-          <Box px={8} w="full" mb="2.5rem" justify="center">
-            <Button
-              variant="outline"
-              colorScheme="telegram"
-              size="lg"
-              width="full"
-              mt="0.9rem"
-              onClick={deleteImage}
-            >
-              Delete Profile Picture
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<MdDeleteForever />}
-              />
-            </Button>
-          </Box>
-        )} */}
-
         <HStack px={8} w="full" justifyContent="space-between">
           <Box variant="outline" size="sm" onClick={toggleColorMode}>
             {darkIcon ? 'Dark' : 'Light'}

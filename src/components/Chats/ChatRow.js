@@ -5,7 +5,7 @@ import { onSnapshot, doc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
 import Moment from 'react-moment';
 
-const ChatRow = ({ selectFriend, friend }) => {
+const ChatRow = ({ selectFriend, friend, onClose }) => {
   const isMe = auth.currentUser.uid;
   const isFrom = friend?.uid;
   const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
@@ -35,6 +35,7 @@ const ChatRow = ({ selectFriend, friend }) => {
         ml={3}
         spacing={0}
         alignItems="flex-start"
+        onClick={onClose}
       >
         <Heading fontSize={12} w="full">
           {friend.name}
