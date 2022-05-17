@@ -7,7 +7,7 @@ import Moment from 'react-moment';
 
 const ChatRow = ({ selectFriend, friend, onClose }) => {
   const isMe = auth.currentUser.uid;
-  const isFrom = friend?.uid;
+  const isFrom = friend?.friends.uid;
   const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
   const [unreadData, setUnreadData] = useState('');
   useEffect(() => {

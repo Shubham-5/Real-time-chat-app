@@ -1,30 +1,23 @@
 import { Flex, Image, Text, useColorModeValue } from '@chakra-ui/react';
 import { MdPersonAdd } from 'react-icons/md';
 const FriendProfile = ({ viewProfileFriend, updateFriends }) => {
-  let boxBg = useColorModeValue('white !important', '#111c44 !important');
   let mainText = useColorModeValue('gray.800', 'white');
   let secondaryText = useColorModeValue('gray.400', 'gray.400');
   return (
     <Flex
       borderRadius="20px"
-      bg={boxBg}
       p="20px"
+      border="2px solid gray"
       h="345px"
       w={{ base: '315px', md: '345px' }}
       alignItems="center"
       direction="column"
     >
-      <Image
-        src="https://i.ibb.co/xmP2pS6/Profile.png"
-        maxW="100%"
-        borderRadius="20px"
-      />
-      <Flex flexDirection="column" mb="30px">
+      <Flex flexDirection="column" mb="40px" mt="50px">
         <Image
           src={viewProfileFriend.avatar}
-          border="5px solid red"
+          border="2px solid gray"
           mx="auto"
-          borderColor={boxBg}
           width="68px"
           objectFit="cover"
           height="68px"

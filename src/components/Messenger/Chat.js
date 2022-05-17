@@ -197,7 +197,7 @@ const Chat = ({
         placement="bottom"
         initialFocusRef={firstField}
         onClose={onClose}
-        width="400px"
+        bg="red"
       >
         <DrawerOverlay />
         <DrawerContent>
