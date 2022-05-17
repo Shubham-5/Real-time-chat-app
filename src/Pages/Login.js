@@ -83,6 +83,7 @@ const Login = ({ setUser }) => {
         email,
         createdAt: Timestamp.fromDate(new Date()),
         isOnline: true,
+        friends: [],
       });
 
       setUser(result);

@@ -14,7 +14,6 @@ import {
   useColorMode,
   ModalFooter,
   FormControl,
-  ModalCloseButton,
   ModalBody,
   ModalHeader,
   ModalContent,

@@ -6,19 +6,14 @@ import {
 } from '@chakra-ui/react';
 import ChatHistorySidebar from './ChatHistorySidebar';
 
-const ChatHistoryDrawer = ({
-  isOpen,
-  onClose,
-  onlineFriends,
-  selectFriend,
-}) => {
+const ChatHistoryDrawer = ({ isOpen, onClose, myFriends, selectFriend }) => {
   return (
     <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent pt={8}>
           <DrawerCloseButton />
           <ChatHistorySidebar
-            onlineFriends={onlineFriends}
+            myFriends={myFriends}
             selectFriend={selectFriend}
             onClose={onClose}
           />

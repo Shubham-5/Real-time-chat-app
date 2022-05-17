@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Button,
   Flex,
@@ -13,13 +13,35 @@ import {
   VStack,
   Heading,
   Text,
+  ButtonGroup,
+  useDisclosure,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerBody,
+  DrawerHeader,
+  DrawerCloseButton,
+  Drawer,
+  DrawerFooter,
+  Divider,
+  Box,
+  Avatar,
 } from '@chakra-ui/react';
-import Moment from 'react-moment';
+
 import { HiChat } from 'react-icons/hi';
-import { FaPaperPlane } from 'react-icons/fa';
-import { MdAccountCircle, MdPermMedia } from 'react-icons/md';
+import { FaPaperPlane, FaUserPlus } from 'react-icons/fa';
+import {
+  MdAccountCircle,
+  MdPermMedia,
+  MdPersonAdd,
+  MdViewList,
+  MdVisibility,
+} from 'react-icons/md';
 import ChatBubble from './ChatBubble';
 import UserAvatar from '../Chats/UserAvatar';
+import { async } from '@firebase/util';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db, auth } from '../../firebase/Firebase';
+import FriendProfile from '../FriendProfile';
 const Chat = ({
   onChatHistoryOpen,
   onChatFilesOpen,
@@ -33,8 +55,11 @@ const Chat = ({
   setImg,
   isUploading2,
 }) => {
+  const toast = useToast();
   const [search, setSearch] = useState('');
   const [friends, setFriends] = useState([]);
+
+  const [viewProfileFriend, setViewProfileFriend] = useState([]);
 
   const searchFriend = event => {
     if (search) {
@@ -49,9 +74,35 @@ const Chat = ({
       setFriends('');
     }
   };
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const firstField = React.useRef();
+
+  const updateFriends = useCallback(async () => {
+    try {
+      await addDoc(collection(db, 'users', auth.currentUser.uid, 'friends'), {
+        friends: viewProfileFriend,
+      });
+
+      toast({
+        description: 'friend updated',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+    } catch (error) {
+      toast({
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      });
+    }
+  }, [viewProfileFriend, toast]);
 
   const bgColor = useColorModeValue('', 'gray.800');
-  const toast = useToast();
+
   return (
     <Flex w="full" flexDirection="column" bg={bgColor} position="relative">
       <HStack px={4} py={4} borderBottomWidth={1}>
@@ -79,10 +130,9 @@ const Chat = ({
         />
       </HStack>
 
-      {/* input search friend start here---- */}
+      {/* input search friend ---- */}
       {search && (
         <VStack
-          boxShadow="lg"
           maxHeight="100vh"
           overflowY="auto"
           position="absolute"
@@ -105,12 +155,13 @@ const Chat = ({
                   style={{ transition: 'background 300ms' }}
                   _hover={{ opacity: '0.9', cursor: 'pointer' }}
                   onClick={() => {
-                    selectFriend(friend);
+                    // selectFriend(friend);
+                    setViewProfileFriend(friend);
                     setSearch('');
                     setFriends('');
                   }}
                 >
-                  <UserAvatar name={friend.name} friend={friend} />
+                  <Avatar name={friend.name} src={friend.avatar} />
                   <VStack
                     overflow="hidden"
                     flex={1}
@@ -118,26 +169,101 @@ const Chat = ({
                     spacing={0}
                     alignItems="flex-start"
                   >
-                    <Heading fontSize={12} w="full">
+                    <Heading fontSize={12} w="full" noOfLines={1}>
                       {friend && friend.name}
                     </Heading>
                   </VStack>
-                  <Text ml={3} fontSize="xs" color="gray.500">
-                    <Moment fromNow>{friend.createdAt.toDate()}</Moment>
-                  </Text>
+                  <ButtonGroup
+                    size="sm"
+                    isAttached
+                    variant="outline"
+                    colorScheme="gray"
+                    onClick={onOpen}
+                  >
+                    <Button mr="-px">View Profile</Button>
+                    <IconButton
+                      aria-label="Add to friends"
+                      icon={<MdVisibility />}
+                    />
+                  </ButtonGroup>
                 </Flex>
               </>
             ))}
         </VStack>
       )}
-      {/* input search friend end---- */}
 
+      <Drawer
+        isOpen={isOpen}
+        placement="bottom"
+        initialFocusRef={firstField}
+        onClose={onClose}
+        width="400px"
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+
+          <DrawerBody>
+            <Flex h="full" flexDirection="column" alignItems="center" w="full">
+              <FriendProfile
+                viewProfileFriend={viewProfileFriend}
+                updateFriends={updateFriends}
+              />
+            </Flex>
+            {/* <Flex
+              h="full"
+              flexDirection="column"
+              alignItems="center"
+              w="full"
+              pt={8}
+            >
+              <HStack justify="center" w="full" px={8} mb={8}>
+                <Text color="gray.500">
+                 
+                </Text>
+              </HStack>
+              <Avatar
+                src={viewProfileFriend && viewProfileFriend.avatar}
+                name={viewProfileFriend && viewProfileFriend.name}
+                size="2xl"
+              ></Avatar>
+
+              <Heading size="md" mt={5}>
+                <ButtonGroup
+                  size="sm"
+                  isAttached
+                  variant="outline"
+                  colorScheme="gray"
+                  onClick={onOpen}
+                >
+                  <Button mr="-px">Add Friend</Button>
+                  <IconButton
+                    aria-label="Add to friends"
+                    icon={<FaUserPlus />}
+                    onClick={updateFriends}
+                  />
+                </ButtonGroup>
+              </Heading>
+
+              <VStack overflowY="auto" mt="2rem" w="full">
+                <HStack px={8} w="full" justifyContent="space-between">
+                  <Box variant="outline" size="sm"></Box>
+                </HStack>
+              </VStack>
+            </Flex> */}
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+
+      {/* chats */}
       {!search && (
         <Flex px={6} overflowY="auto" flexDirection="column" flex={1}>
           <Stat mt={6}>
             <StatLabel color="gray.500">Chatting with</StatLabel>
             <StatNumber>
-              {chat ? chat.name : 'select a friend to start conversation'}
+              {chat
+                ? chat.friends.name
+                : 'select a friend to start conversation'}
             </StatNumber>
           </Stat>
           {messages.length

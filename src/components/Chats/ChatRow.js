@@ -28,7 +28,7 @@ const ChatRow = ({ selectFriend, friend, onClose }) => {
       _hover={{ opacity: '0.9', cursor: 'pointer' }}
       onClick={() => selectFriend(friend)}
     >
-      <UserAvatar name={friend.name} friend={friend} />
+      <UserAvatar name={friend.friends.name} friend={friend} />
       <VStack
         overflow="hidden"
         flex={1}
@@ -38,7 +38,7 @@ const ChatRow = ({ selectFriend, friend, onClose }) => {
         onClick={onClose}
       >
         <Heading fontSize={12} w="full">
-          {friend.name}
+          {friend.friends.name}
         </Heading>
 
         <Text

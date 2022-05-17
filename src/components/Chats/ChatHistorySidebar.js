@@ -13,7 +13,12 @@ import {
 
 import ChatRow from './ChatRow';
 
-const ChatHistorySidebar = ({ onlineFriends, selectFriend, onClose }) => {
+const ChatHistorySidebar = ({
+  onlineFriends,
+  selectFriend,
+  onClose,
+  myFriends,
+}) => {
   const bgColor = useColorModeValue('', 'gray.800');
 
   return (
@@ -21,7 +26,7 @@ const ChatHistorySidebar = ({ onlineFriends, selectFriend, onClose }) => {
       <HStack px={8} w="full" justifyContent="space-between">
         <Heading size="xs">Friends</Heading>
         <Text fontSize="sm" color="gray.500" fontWeight="semibold">
-          {onlineFriends.length}
+          {myFriends.length}
         </Text>
       </HStack>
 
@@ -36,8 +41,8 @@ const ChatHistorySidebar = ({ onlineFriends, selectFriend, onClose }) => {
       <Box w="full" overflowY="auto">
         <List w="full" spacing={0}>
           <ListItem>
-            {onlineFriends &&
-              onlineFriends.map(friend => (
+            {myFriends &&
+              myFriends.map(friend => (
                 <ChatRow
                   friend={friend}
                   selectFriend={selectFriend}

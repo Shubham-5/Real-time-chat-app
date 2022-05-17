@@ -3,7 +3,7 @@ import { Avatar, AvatarBadge } from '@chakra-ui/react';
 const UserAvatar = ({ friend }) => {
   return (
     <>
-      <Avatar src={friend.avatar} name={friend.name}>
+      <Avatar src={friend.friends.avatar} name={friend.friends.name}>
         {friend.isOnline ? (
           <AvatarBadge boxSize="1em" bg="green.500" />
         ) : (

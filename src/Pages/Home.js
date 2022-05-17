@@ -43,6 +43,7 @@ const Home = () => {
   const toast = useToast();
 
   const [onlineFriends, setOnlineFriends] = useState([]);
+  const [myFriends, setMyFriends] = useState([]);
   const [chat, setChat] = useState('');
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
@@ -59,21 +60,46 @@ const Home = () => {
   const isMe = auth.currentUser.uid;
 
   useEffect(() => {
+    //profile data of user
+    getDoc(doc(db, 'users', isMe)).then(docSnap => {
+      if (docSnap.exists) {
+        setProfileData(docSnap.data());
+      }
+    });
+
     //chat row component code for getting friends  ----
+    const myFriendsRef = collection(db, 'users', isMe, 'friends');
     const userRef = collection(db, 'users');
     //query object
-    const q = query(userRef, where('uid', 'not-in', [isMe]));
+    // const queryForMyFriends = query(userRef, where('uid', 'in', [isMe]));
+    const queryForOnlineFriends = query(
+      userRef,
+      where('uid', 'not-in', [isMe])
+    );
     //execute query
-    const unsubscribe = onSnapshot(q, querySnap => {
+    const setMyFriendsHandler = onSnapshot(myFriendsRef, querySnap => {
       let users = [];
       querySnap.forEach(doc => {
         users.push(doc.data());
       });
-      setOnlineFriends(users);
+      setMyFriends(users);
       return () => {
-        unsubscribe();
+        setMyFriendsHandler();
       };
     });
+    const setOnlineFriendsHandler = onSnapshot(
+      queryForOnlineFriends,
+      querySnap => {
+        let users = [];
+        querySnap.forEach(doc => {
+          users.push(doc.data());
+        });
+        setOnlineFriends(users);
+        return () => {
+          setOnlineFriendsHandler();
+        };
+      }
+    );
   }, [isMe]);
 
   const updateName = useCallback(async () => {
@@ -108,12 +134,6 @@ const Home = () => {
   useEffect(() => {
     //  ---- profile page code ---
 
-    //profile data of user
-    getDoc(doc(db, 'users', isMe)).then(docSnap => {
-      if (docSnap.exists) {
-        setProfileData(docSnap.data());
-      }
-    });
     if (profileImg) {
       // Upload file and metadata to the object
       const uploadImg = async () => {
@@ -152,7 +172,7 @@ const Home = () => {
       await updateDoc(doc(db, 'users', auth.currentUser.uid), {
         isOnline: false,
       });
-      await signOut(auth);
+      signOut(auth);
     } catch (error) {
       console.log(error);
     }
@@ -182,7 +202,7 @@ const Home = () => {
   const selectFriend = async friend => {
     setChat(friend);
 
-    const isFrom = friend.uid;
+    const isFrom = friend.friends.uid;
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
     // get messages from selected user in asc order
@@ -208,7 +228,7 @@ const Home = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     //selected friend id
-    const isFrom = chat.uid;
+    const isFrom = chat.friends.uid;
     //document id
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
@@ -264,6 +284,7 @@ const Home = () => {
         >
           <ChatHistorySidebar
             onlineFriends={onlineFriends}
+            myFriends={myFriends}
             selectFriend={selectFriend}
           />
         </Flex>
@@ -308,6 +329,7 @@ const Home = () => {
           onClose={onChatHistoryClose}
           onlineFriends={onlineFriends}
           selectFriend={selectFriend}
+          myFriends={myFriends}
         />
         <ChatFilesDrawer
           isMe={isMe}
