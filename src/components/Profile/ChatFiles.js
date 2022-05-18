@@ -122,9 +122,7 @@ const ChatFiles = ({
           icon={<MdCreate />}
         ></IconButton>
       </Heading>
-      <Box px={8} w="full">
-        <Divider mt={6} color="gray.100" />
-      </Box>
+
       <VStack overflowY="auto" mt="2rem" w="full">
         <HStack px={8} w="full" justifyContent="space-between">
           <Box variant="outline" size="sm" onClick={toggleColorMode}>
@@ -148,6 +146,7 @@ const ChatFiles = ({
             />
           </Button>
         </HStack>
+
         <Box px={8} w="full">
           <Divider mt={6} color="gray.100" />
         </Box>

@@ -1,6 +1,14 @@
-import { Flex, Image, Text, useColorModeValue } from '@chakra-ui/react';
-import { MdPersonAdd } from 'react-icons/md';
-const FriendProfile = ({ viewProfileFriend, updateFriends }) => {
+import {
+  Avatar,
+  Button,
+  Flex,
+  IconButton,
+  Image,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react';
+
+const FriendProfile = ({ viewProfileFriend, updateFriends, isLoading }) => {
   let mainText = useColorModeValue('gray.800', 'white');
   let secondaryText = useColorModeValue('gray.400', 'gray.400');
   return (
@@ -13,9 +21,10 @@ const FriendProfile = ({ viewProfileFriend, updateFriends }) => {
       alignItems="center"
       direction="column"
     >
-      <Flex flexDirection="column" mb="40px" mt="50px">
-        <Image
+      <Flex flexDirection="column" mb="20px" mt="50px">
+        <Avatar
           src={viewProfileFriend.avatar}
+          name={viewProfileFriend.name}
           border="2px solid gray"
           mx="auto"
           width="68px"
@@ -28,6 +37,7 @@ const FriendProfile = ({ viewProfileFriend, updateFriends }) => {
           fontWeight="600"
           color={mainText}
           textAlign="center"
+          pt="4px"
           fontSize="xl"
         >
           {viewProfileFriend.name}
@@ -41,7 +51,7 @@ const FriendProfile = ({ viewProfileFriend, updateFriends }) => {
           {viewProfileFriend.email}
         </Text>
       </Flex>
-      <Flex justify="space-between" w="100%" px="36px">
+      <Flex justify="center" flexDirection="column" w="100%" px="36px">
         <Flex flexDirection="column">
           <Text
             fontWeight="600"
@@ -51,26 +61,25 @@ const FriendProfile = ({ viewProfileFriend, updateFriends }) => {
           >
             17
           </Text>
-          <Text color={secondaryText} fontWeight="500">
+          <Text color={secondaryText} fontWeight="500" textAlign="center">
             Friends
           </Text>
         </Flex>
-        <Flex flexDirection="column" cursor="pointer" onClick={updateFriends}>
-          <Text
-            display="flex"
-            justifyContent="center"
-            fontWeight="600"
-            color={mainText}
-            fontSize="xl"
-            textAlign="center"
-            paddingTop="3px"
+        <Flex flexDirection="row" cursor="pointer" onClick={updateFriends}>
+          <Button
+            w={'full'}
+            mt={8}
+            bg={useColorModeValue('#151f21', 'gray.900')}
+            color={'white'}
+            isLoading={isLoading}
+            rounded={'md'}
+            _hover={{
+              transform: 'translateY(-2px)',
+              boxShadow: 'lg',
+            }}
           >
-            <MdPersonAdd size={26} />
-          </Text>
-
-          <Text color={secondaryText} fontWeight="500">
             Add Friend
-          </Text>
+          </Button>
         </Flex>
       </Flex>
     </Flex>

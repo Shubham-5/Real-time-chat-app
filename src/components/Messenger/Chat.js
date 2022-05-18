@@ -12,18 +12,13 @@ import {
   useToast,
   VStack,
   Heading,
-  Text,
   ButtonGroup,
   useDisclosure,
   DrawerOverlay,
   DrawerContent,
   DrawerBody,
-  DrawerHeader,
   DrawerCloseButton,
   Drawer,
-  DrawerFooter,
-  Divider,
-  Box,
   Avatar,
 } from '@chakra-ui/react';
 
@@ -33,20 +28,21 @@ import {
   MdAccountCircle,
   MdPermMedia,
   MdPersonAdd,
+  MdTrendingUp,
   MdViewList,
   MdVisibility,
 } from 'react-icons/md';
 import ChatBubble from './ChatBubble';
-import UserAvatar from '../Chats/UserAvatar';
-import { async } from '@firebase/util';
-import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db, auth } from '../../firebase/Firebase';
+
 import FriendProfile from '../FriendProfile';
+import { addDoc, collection } from 'firebase/firestore';
+import { auth, db } from '../../firebase/Firebase';
 const Chat = ({
   onChatHistoryOpen,
   onChatFilesOpen,
   onlineFriends,
   selectFriend,
+  myFriends,
   chat,
   setText,
   text,
@@ -58,8 +54,9 @@ const Chat = ({
   const toast = useToast();
   const [search, setSearch] = useState('');
   const [friends, setFriends] = useState([]);
-
-  const [viewProfileFriend, setViewProfileFriend] = useState([]);
+  const [viewProfileFriend, setViewProfileFriend] = useState('');
+  const [isLoading, setLoading] = useState(false);
+  const [alreadyFriend, setAlreadyFriends] = useState([]);
 
   const searchFriend = event => {
     if (search) {
@@ -67,7 +64,6 @@ const Chat = ({
         const filterFriends = onlineFriends.filter(data =>
           data.name.toLowerCase().includes(search)
         );
-
         setFriends(filterFriends);
       }
     } else {
@@ -78,28 +74,45 @@ const Chat = ({
   const firstField = React.useRef();
 
   const updateFriends = useCallback(async () => {
-    try {
-      await addDoc(collection(db, 'users', auth.currentUser.uid, 'friends'), {
-        friends: viewProfileFriend,
-      });
+    setLoading(true);
+    let isFriendExist = await myFriends.filter(
+      doc => doc.friends.uid === viewProfileFriend.uid
+    );
+    if (isFriendExist.length === 0) {
+      try {
+        await addDoc(collection(db, 'users', auth.currentUser.uid, 'friends'), {
+          friends: viewProfileFriend,
+        });
 
+        toast({
+          description: `${viewProfileFriend.name} added`,
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        });
+      } catch (error) {
+        toast({
+          description: error.message,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+          position: 'top',
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
       toast({
-        description: 'friend updated',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-        position: 'top',
-      });
-    } catch (error) {
-      toast({
-        description: error.message,
+        description: `${viewProfileFriend.name} already added your friend`,
         status: 'error',
         duration: 9000,
         isClosable: true,
         position: 'top',
       });
     }
-  }, [viewProfileFriend, toast]);
+    setLoading(false);
+  }, [myFriends, viewProfileFriend.uid]);
 
   const bgColor = useColorModeValue('', 'gray.800');
 
@@ -197,7 +210,7 @@ const Chat = ({
         placement="bottom"
         initialFocusRef={firstField}
         onClose={onClose}
-        bg="red"
+        colorScheme="blue"
       >
         <DrawerOverlay />
         <DrawerContent>
@@ -208,49 +221,9 @@ const Chat = ({
               <FriendProfile
                 viewProfileFriend={viewProfileFriend}
                 updateFriends={updateFriends}
+                isLoading={isLoading}
               />
             </Flex>
-            {/* <Flex
-              h="full"
-              flexDirection="column"
-              alignItems="center"
-              w="full"
-              pt={8}
-            >
-              <HStack justify="center" w="full" px={8} mb={8}>
-                <Text color="gray.500">
-                 
-                </Text>
-              </HStack>
-              <Avatar
-                src={viewProfileFriend && viewProfileFriend.avatar}
-                name={viewProfileFriend && viewProfileFriend.name}
-                size="2xl"
-              ></Avatar>
-
-              <Heading size="md" mt={5}>
-                <ButtonGroup
-                  size="sm"
-                  isAttached
-                  variant="outline"
-                  colorScheme="gray"
-                  onClick={onOpen}
-                >
-                  <Button mr="-px">Add Friend</Button>
-                  <IconButton
-                    aria-label="Add to friends"
-                    icon={<FaUserPlus />}
-                    onClick={updateFriends}
-                  />
-                </ButtonGroup>
-              </Heading>
-
-              <VStack overflowY="auto" mt="2rem" w="full">
-                <HStack px={8} w="full" justifyContent="space-between">
-                  <Box variant="outline" size="sm"></Box>
-                </HStack>
-              </VStack>
-            </Flex> */}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
@@ -285,51 +258,39 @@ const Chat = ({
               onSubmit={handleSubmit}
             />
 
-            <Button
-              colorScheme="blue"
-              h="2.5rem"
-              variant="ghost"
-              size="sm"
-              width="30px"
-              mr="1rem"
-              _hover={{ bg: '' }}
-              _active={{
-                bg: '',
-                borderColor: '',
-              }}
-            >
-              <Input
-                onChange={e => {
-                  setImg(e.target.files[0]);
+            <Input
+              onChange={e => {
+                setImg(e.target.files[0]);
 
-                  toast({
-                    description: 'img added, click a send button',
-                    status: 'success',
-                    duration: 4000,
-                    isClosable: true,
-                    position: 'top',
-                  });
-                }}
-                type="file"
-                id="img"
-                accept="image/*"
-                cursor="pointer"
-                variant="ghost"
-                opacity="0"
-                display="block"
-                left="1.8rem"
-                top="0.5rem"
-              />
-              <IconButton
-                colorScheme="blue"
-                mr="30px"
-                aria-label="Send images"
-                variant="ghost"
-                pointerEvents="none"
-                isLoading={isUploading2}
-                icon={<MdPermMedia />}
-              />
-            </Button>
+                toast({
+                  description: 'image added, click a send button',
+                  status: 'success',
+                  duration: 4000,
+                  isClosable: true,
+                  position: 'top',
+                });
+              }}
+              type="file"
+              id="img"
+              accept="image/*"
+              cursor="pointer"
+              variant="ghost"
+              opacity="0"
+              display="absolute"
+              left="50px"
+              width="50px"
+              background="red"
+            />
+            <IconButton
+              colorScheme="blue"
+              mr="20px"
+              aria-label="Send images"
+              variant="ghost"
+              cursor="pointer"
+              pointerEvents="none"
+              isLoading={isUploading2}
+              icon={<MdPermMedia />}
+            />
 
             <IconButton
               colorScheme="blue"
