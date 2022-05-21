@@ -36,7 +36,7 @@ const ChatFiles = ({
   updateName,
 }) => {
   //joining date of user formating
-  if (profileData) {
+  if (profileData && profileData.createdAt) {
     var accountCreatedDate = moment(profileData.createdAt.toDate()).format(
       'MMM DD YYYY h:mm A'
     );

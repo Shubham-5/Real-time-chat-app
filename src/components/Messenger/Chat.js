@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   Button,
   Flex,
@@ -35,7 +35,14 @@ import {
 import ChatBubble from './ChatBubble';
 
 import FriendProfile from '../FriendProfile';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
 const Chat = ({
   onChatHistoryOpen,
@@ -54,9 +61,24 @@ const Chat = ({
   const toast = useToast();
   const [search, setSearch] = useState('');
   const [friends, setFriends] = useState([]);
+  const [friendsLength, setFriendsLength] = useState();
   const [viewProfileFriend, setViewProfileFriend] = useState('');
   const [isLoading, setLoading] = useState(false);
-  const [alreadyFriend, setAlreadyFriends] = useState([]);
+
+  useEffect(() => {
+    const setLengthHandler = async () => {
+      if (myFriends.length > 0) {
+        setFriendsLength(myFriends.length);
+        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+          friends: friendsLength,
+        });
+      } else {
+        setFriendsLength(0);
+      }
+    };
+
+    setLengthHandler();
+  }, [friendsLength, myFriends.length]);
 
   const searchFriend = event => {
     if (search) {
@@ -70,18 +92,23 @@ const Chat = ({
       setFriends('');
     }
   };
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const firstField = React.useRef();
 
   const updateFriends = useCallback(async () => {
     setLoading(true);
     let isFriendExist = await myFriends.filter(
       doc => doc.friends.uid === viewProfileFriend.uid
     );
+
     if (isFriendExist.length === 0) {
       try {
         await addDoc(collection(db, 'users', auth.currentUser.uid, 'friends'), {
           friends: viewProfileFriend,
+        });
+
+        setFriendsLength(prev => prev + 1);
+
+        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+          friends: friendsLength,
         });
 
         toast({
@@ -114,6 +141,8 @@ const Chat = ({
     setLoading(false);
   }, [myFriends, viewProfileFriend.uid]);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const firstField = React.useRef();
   const bgColor = useColorModeValue('', 'gray.800');
 
   return (
@@ -168,7 +197,6 @@ const Chat = ({
                   style={{ transition: 'background 300ms' }}
                   _hover={{ opacity: '0.9', cursor: 'pointer' }}
                   onClick={() => {
-                    // selectFriend(friend);
                     setViewProfileFriend(friend);
                     setSearch('');
                     setFriends('');

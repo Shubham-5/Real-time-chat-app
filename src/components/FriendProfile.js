@@ -2,15 +2,15 @@ import {
   Avatar,
   Button,
   Flex,
-  IconButton,
-  Image,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import React from 'react';
 
 const FriendProfile = ({ viewProfileFriend, updateFriends, isLoading }) => {
   let mainText = useColorModeValue('gray.800', 'white');
   let secondaryText = useColorModeValue('gray.400', 'gray.400');
+
   return (
     <Flex
       borderRadius="20px"
@@ -59,7 +59,7 @@ const FriendProfile = ({ viewProfileFriend, updateFriends, isLoading }) => {
             fontSize="xl"
             textAlign="center"
           >
-            17
+            {viewProfileFriend.friends}
           </Text>
           <Text color={secondaryText} fontWeight="500" textAlign="center">
             Friends
