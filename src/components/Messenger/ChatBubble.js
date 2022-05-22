@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import Moment from 'react-moment';
 import { VStack, Box, Text, useColorModeValue, Image } from '@chakra-ui/react';
+import ReactAudioPlayer from 'react-audio-player';
 import { auth } from '../../firebase/Firebase';
 
 const ChatBubble = ({ message }) => {
@@ -19,7 +20,7 @@ const ChatBubble = ({ message }) => {
   return (
     <VStack mt={6} alignItems={alignment} alignSelf={alignment}>
       <Box
-        bg={isMe ? bgColor1 : bgColor2}
+        bg={message.audio ? '' : isMe ? bgColor1 : bgColor2}
         px={message.media ? 2 : 6}
         py={message.media ? 2 : 4}
         maxW={80}
@@ -30,6 +31,11 @@ const ChatBubble = ({ message }) => {
       >
         {message.media ? (
           <Image src={message.media} alt={message.text} />
+        ) : null}
+        {message.audio ? (
+          <Box>
+            <ReactAudioPlayer controls src={message && message.audio} />
+          </Box>
         ) : null}
         {message.text}
       </Box>

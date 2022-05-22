@@ -48,6 +48,7 @@ const Home = () => {
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
   const [img, setImg] = useState('');
+  const [audio, setAudio] = useState('');
 
   //profile page states
   const [profileData, setProfileData] = useState('');
@@ -235,6 +236,7 @@ const Home = () => {
     // sending images
     let url;
     setIsUploading2(true);
+
     if (img) {
       const imgRef = ref(
         storage,
@@ -244,18 +246,19 @@ const Home = () => {
       const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
       url = dlUrl;
     }
+
     setIsUploading2(false);
 
     // adding messages to firestore
-    if (text || img) {
+    if (text || img || audio) {
       await addDoc(collection(db, 'messages', id, 'chat'), {
         text,
         from: isMe,
         to: isFrom,
         dateSent: Timestamp.fromDate(new Date()),
         media: url || '',
+        audio: audio.url,
       });
-
       // adding last msg
       await setDoc(doc(db, 'lastMsg', id), {
         text,
@@ -267,6 +270,7 @@ const Home = () => {
       });
     }
     setText('');
+    setAudio('');
     setImg('');
   };
 
@@ -302,6 +306,7 @@ const Home = () => {
             text={text}
             setImg={setImg}
             img={img}
+            setAudio={setAudio}
             isUploading2={isUploading2}
             messages={messages}
           />

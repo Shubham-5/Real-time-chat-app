@@ -20,10 +20,13 @@ import {
   DrawerCloseButton,
   Drawer,
   Avatar,
+  Text,
+  Box,
 } from '@chakra-ui/react';
 
 import { HiChat } from 'react-icons/hi';
 import { FaPaperPlane, FaUserPlus } from 'react-icons/fa';
+import { MdMic, MdMicOff } from 'react-icons/md';
 import {
   MdAccountCircle,
   MdPermMedia,
@@ -32,6 +35,8 @@ import {
   MdViewList,
   MdVisibility,
 } from 'react-icons/md';
+
+import AudioReactRecorder, { RecordState } from 'audio-react-recorder';
 import ChatBubble from './ChatBubble';
 
 import FriendProfile from '../FriendProfile';
@@ -57,6 +62,7 @@ const Chat = ({
   messages,
   setImg,
   isUploading2,
+  setAudio,
 }) => {
   const toast = useToast();
   const [search, setSearch] = useState('');
@@ -64,8 +70,10 @@ const Chat = ({
   const [friendsLength, setFriendsLength] = useState();
   const [viewProfileFriend, setViewProfileFriend] = useState('');
   const [isLoading, setLoading] = useState(false);
+  const [audioState, setAudioState] = useState({ recordState: null });
 
   useEffect(() => {
+    // setting my friends length to user field
     const setLengthHandler = async () => {
       if (myFriends.length > 0) {
         setFriendsLength(myFriends.length);
@@ -140,6 +148,23 @@ const Chat = ({
     }
     setLoading(false);
   }, [myFriends, viewProfileFriend.uid]);
+
+  const start = () => {
+    setAudioState({
+      recordState: RecordState.START,
+    });
+  };
+
+  const stop = () => {
+    setAudioState({
+      recordState: RecordState.STOP,
+    });
+  };
+
+  //audioData contains blob and blobUrl
+  const onStop = audioData => {
+    setAudio(audioData);
+  };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
@@ -242,8 +267,7 @@ const Chat = ({
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton />
-
+          {/* <DrawerCloseButton /> */}
           <DrawerBody>
             <Flex h="full" flexDirection="column" alignItems="center" w="full">
               <FriendProfile
@@ -267,23 +291,58 @@ const Chat = ({
                 : 'select a friend to start conversation'}
             </StatNumber>
           </Stat>
+
           {messages.length
             ? messages.map((message, index) => (
                 <ChatBubble key={index} message={message} />
               ))
             : null}
+
+          <Box
+            position="absolute"
+            zIndex="100"
+            bottom="10%"
+            right={{ base: '85%', md: '89%', lg: '89%' }}
+            opacity={audioState.recordState === 'start' ? '1' : '0'}
+          >
+            <AudioReactRecorder
+              state={audioState.recordState}
+              onStop={onStop}
+              canvasWidth="50"
+              canvasHeight="20"
+            />
+          </Box>
         </Flex>
       )}
+
       {!search && (
         <form onSubmit={handleSubmit}>
           <Flex pl={4} pr={2} py={2} borderTopWidth={1}>
+            {audioState.recordState === null ||
+            audioState.recordState === 'stop' ? (
+              <IconButton
+                onClick={start}
+                colorScheme="blue"
+                variant="ghost"
+                icon={<MdMic />}
+              />
+            ) : (
+              <IconButton
+                onClick={stop}
+                colorScheme="blue"
+                variant="ghost"
+                icon={<MdMicOff />}
+              />
+            )}
+
             <Input
               variant="unstyled"
               placeholder="Type your message"
               value={text}
               isDisabled={!chat}
-              onChange={e => setText(e.target.value)}
-              onSubmit={handleSubmit}
+              ml="20px"
+              Change={e => setText(e.target.value)}
+              Submit={handleSubmit}
             />
 
             <Input
@@ -291,7 +350,7 @@ const Chat = ({
                 setImg(e.target.files[0]);
 
                 toast({
-                  description: 'image added, click a send button',
+                  description: 'Image added',
                   status: 'success',
                   duration: 4000,
                   isClosable: true,
@@ -309,6 +368,7 @@ const Chat = ({
               width="50px"
               background="red"
             />
+
             <IconButton
               colorScheme="blue"
               mr="20px"
@@ -316,15 +376,14 @@ const Chat = ({
               variant="ghost"
               cursor="pointer"
               pointerEvents="none"
-              isLoading={isUploading2}
               icon={<MdPermMedia />}
             />
-
             <IconButton
               colorScheme="blue"
               aria-label="Send message"
               variant="ghost"
               icon={<FaPaperPlane />}
+              isLoading={isUploading2}
               onClick={handleSubmit}
             />
           </Flex>

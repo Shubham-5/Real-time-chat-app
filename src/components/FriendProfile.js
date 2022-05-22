@@ -59,7 +59,7 @@ const FriendProfile = ({ viewProfileFriend, updateFriends, isLoading }) => {
             fontSize="xl"
             textAlign="center"
           >
-            {viewProfileFriend.friends}
+            {viewProfileFriend.friends ? viewProfileFriend.friends : '0'}
           </Text>
           <Text color={secondaryText} fontWeight="500" textAlign="center">
             Friends
