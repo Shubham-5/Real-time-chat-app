@@ -341,14 +341,13 @@ const Chat = ({
               value={text}
               isDisabled={!chat}
               ml="20px"
-              Change={e => setText(e.target.value)}
+              onChange={e => setText(e.target.value)}
               Submit={handleSubmit}
             />
 
             <Input
               onChange={e => {
                 setImg(e.target.files[0]);
-
                 toast({
                   description: 'Image added',
                   status: 'success',

@@ -257,7 +257,7 @@ const Home = () => {
         to: isFrom,
         dateSent: Timestamp.fromDate(new Date()),
         media: url || '',
-        audio: audio.url,
+        audio: audio,
       });
       // adding last msg
       await setDoc(doc(db, 'lastMsg', id), {

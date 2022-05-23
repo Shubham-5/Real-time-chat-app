@@ -20,7 +20,7 @@ const ChatBubble = ({ message }) => {
   return (
     <VStack mt={6} alignItems={alignment} alignSelf={alignment}>
       <Box
-        bg={message.audio ? '' : isMe ? bgColor1 : bgColor2}
+        bg={ isMe ? bgColor1 : bgColor2}
         px={message.media ? 2 : 6}
         py={message.media ? 2 : 4}
         maxW={80}
@@ -34,7 +34,7 @@ const ChatBubble = ({ message }) => {
         ) : null}
         {message.audio ? (
           <Box>
-            <ReactAudioPlayer controls src={message && message.audio} />
+            <ReactAudioPlayer controls src={message && message.audio.url} />
           </Box>
         ) : null}
         {message.text}
