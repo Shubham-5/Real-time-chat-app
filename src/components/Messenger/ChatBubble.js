@@ -17,10 +17,14 @@ const ChatBubble = ({ message }) => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [message]);
 
+  const isVideo = message.media && message.media.includes('videos');
+  const isImage = message.media && message.media.includes('images');
+  const isFile = message.media && message.media.includes('files');
+
   return (
     <VStack mt={6} alignItems={alignment} alignSelf={alignment}>
       <Box
-        bg={ isMe ? bgColor1 : bgColor2}
+        bg={isMe ? bgColor1 : bgColor2}
         px={message.media ? 2 : 6}
         py={message.media ? 2 : 4}
         maxW={80}
@@ -29,14 +33,21 @@ const ChatBubble = ({ message }) => {
         borderBottomLeftRadius={message.media ? 5 : bottomLeftRadius}
         borderBottomRightRadius={message.media ? 5 : bottomRightRadius}
       >
-        {message.media ? (
+        {isImage && isImage ? (
           <Image src={message.media} alt={message.text} />
         ) : null}
-        {message.audio ? (
-          <Box>
-            <ReactAudioPlayer controls src={message && message.audio.url} />
-          </Box>
+        {isFile && isFile ? (
+          <object
+            width="100%"
+            height="400"
+            data={message.media}
+            type="application/pdf"
+          >
+            {''}
+          </object>
         ) : null}
+        {isVideo && isVideo ? <video src={message.media} /> : null}
+
         {message.text}
       </Box>
       <Text fontSize="xs" color="gray">

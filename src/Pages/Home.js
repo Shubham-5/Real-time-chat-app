@@ -48,6 +48,8 @@ const Home = () => {
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
   const [img, setImg] = useState('');
+  const [video, setVideo] = useState('');
+  const [file, setFile] = useState('');
   const [audio, setAudio] = useState('');
 
   //profile page states
@@ -59,7 +61,7 @@ const Home = () => {
 
   //current user id
   const isMe = auth.currentUser.uid;
-
+  console.log('video :', video, 'img :', img, 'pdf :', file);
   useEffect(() => {
     //profile data of user
     getDoc(doc(db, 'users', isMe)).then(docSnap => {
@@ -233,7 +235,7 @@ const Home = () => {
     //document id
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
-    // sending images
+    // sending images || videos || file
     let url;
     setIsUploading2(true);
 
@@ -246,18 +248,35 @@ const Home = () => {
       const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
       url = dlUrl;
     }
+    if (video) {
+      const videoRef = ref(
+        storage,
+        `videos/${new Date().getTime()} - ${video.name}`
+      );
+      const snap = await uploadBytes(videoRef, video);
+      const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+      url = dlUrl;
+    }
+    if (file) {
+      const fileRef = ref(
+        storage,
+        `files/${new Date().getTime()} - ${file.name}`
+      );
+      const snap = await uploadBytes(fileRef, file);
+      const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+      url = dlUrl;
+    }
 
     setIsUploading2(false);
 
     // adding messages to firestore
-    if (text || img || audio) {
+    if (text || img || video || file) {
       await addDoc(collection(db, 'messages', id, 'chat'), {
         text,
         from: isMe,
         to: isFrom,
         dateSent: Timestamp.fromDate(new Date()),
         media: url || '',
-        audio: audio,
       });
       // adding last msg
       await setDoc(doc(db, 'lastMsg', id), {
@@ -266,11 +285,14 @@ const Home = () => {
         to: isFrom,
         dateSent: Timestamp.fromDate(new Date()),
         media: url || '',
+
         unread: true,
       });
     }
     setText('');
-    setAudio('');
+    setVideo('');
+    setFile('');
+    // setAudio('');
     setImg('');
   };
 
@@ -306,6 +328,10 @@ const Home = () => {
             text={text}
             setImg={setImg}
             img={img}
+            setVideo={setVideo}
+            video={video}
+            setFile={setFile}
+            file={file}
             setAudio={setAudio}
             isUploading2={isUploading2}
             messages={messages}

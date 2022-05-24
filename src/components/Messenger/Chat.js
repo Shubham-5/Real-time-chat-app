@@ -22,19 +22,28 @@ import {
   Avatar,
   Text,
   Box,
+  MenuItem,
+  MenuList,
+  MenuButton,
+  Menu,
 } from '@chakra-ui/react';
 
 import { HiChat } from 'react-icons/hi';
 import { FaPaperPlane, FaUserPlus } from 'react-icons/fa';
-import { MdMic, MdMicOff } from 'react-icons/md';
 import {
+  MdMic,
+  MdMicOff,
+  MdAttachFile,
+  MdVideoLibrary,
   MdAccountCircle,
   MdPermMedia,
   MdPersonAdd,
   MdTrendingUp,
   MdViewList,
   MdVisibility,
+  MdAdd,
 } from 'react-icons/md';
+import { MdFileUpload } from 'react-icons/md';
 
 import AudioReactRecorder, { RecordState } from 'audio-react-recorder';
 import ChatBubble from './ChatBubble';
@@ -61,6 +70,11 @@ const Chat = ({
   handleSubmit,
   messages,
   setImg,
+  img,
+  setFile,
+  file,
+  setVideo,
+  video,
   isUploading2,
   setAudio,
 }) => {
@@ -70,7 +84,7 @@ const Chat = ({
   const [friendsLength, setFriendsLength] = useState();
   const [viewProfileFriend, setViewProfileFriend] = useState('');
   const [isLoading, setLoading] = useState(false);
-  const [audioState, setAudioState] = useState({ recordState: null });
+  // const [audioState, setAudioState] = useState({ recordState: null });
 
   useEffect(() => {
     // setting my friends length to user field
@@ -80,12 +94,11 @@ const Chat = ({
         await updateDoc(doc(db, 'users', auth.currentUser.uid), {
           friends: friendsLength,
         });
-      } else {
-        setFriendsLength(0);
       }
     };
-
-    setLengthHandler();
+    return () => {
+      setLengthHandler();
+    };
   }, [friendsLength, myFriends.length]);
 
   const searchFriend = event => {
@@ -149,25 +162,29 @@ const Chat = ({
     setLoading(false);
   }, [myFriends, viewProfileFriend.uid]);
 
-  const start = () => {
-    setAudioState({
-      recordState: RecordState.START,
-    });
-  };
+  // const start = () => {
+  //   setAudioState({
+  //     recordState: RecordState.START,
+  //   });
+  // };
 
-  const stop = () => {
-    setAudioState({
-      recordState: RecordState.STOP,
-    });
-  };
+  // const stop = () => {
+  //   setAudioState({
+  //     recordState: RecordState.STOP,
+  //   });
+  // };
 
-  //audioData contains blob and blobUrl
-  const onStop = audioData => {
-    setAudio(audioData);
-  };
+  // //audioData contains blob and blobUrl
+  // const onStop = async audioData => {
+  //   setAudio(audioData);
+  //   console.log(audioData);
+  // };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
+  const ImageInputRef = React.useRef(null);
+  const VideoInputRef = React.useRef(null);
+  const FileInputRef = React.useRef(null);
   const bgColor = useColorModeValue('', 'gray.800');
 
   return (
@@ -298,7 +315,7 @@ const Chat = ({
               ))
             : null}
 
-          <Box
+          {/* <Box
             position="absolute"
             zIndex="100"
             bottom="10%"
@@ -311,14 +328,14 @@ const Chat = ({
               canvasWidth="50"
               canvasHeight="20"
             />
-          </Box>
+          </Box> */}
         </Flex>
       )}
 
       {!search && (
         <form onSubmit={handleSubmit}>
           <Flex pl={4} pr={2} py={2} borderTopWidth={1}>
-            {audioState.recordState === null ||
+            {/* {audioState.recordState === null ||
             audioState.recordState === 'stop' ? (
               <IconButton
                 onClick={start}
@@ -333,14 +350,13 @@ const Chat = ({
                 variant="ghost"
                 icon={<MdMicOff />}
               />
-            )}
+            )} */}
 
             <Input
               variant="unstyled"
               placeholder="Type your message"
               value={text}
               isDisabled={!chat}
-              ml="20px"
               onChange={e => setText(e.target.value)}
               Submit={handleSubmit}
             />
@@ -348,35 +364,89 @@ const Chat = ({
             <Input
               onChange={e => {
                 setImg(e.target.files[0]);
-                toast({
-                  description: 'Image added',
-                  status: 'success',
-                  duration: 4000,
-                  isClosable: true,
-                  position: 'top',
-                });
+                img &&
+                  toast({
+                    description: 'Image added',
+                    status: 'success',
+                    duration: 4000,
+                    isClosable: true,
+                    position: 'top',
+                  });
               }}
               type="file"
               id="img"
+              ref={ImageInputRef}
               accept="image/*"
               cursor="pointer"
-              variant="ghost"
-              opacity="0"
-              display="absolute"
-              left="50px"
-              width="50px"
-              background="red"
+              display="none"
             />
-
-            <IconButton
-              colorScheme="blue"
-              mr="20px"
-              aria-label="Send images"
-              variant="ghost"
+            <Input
+              onChange={e => {
+                setVideo(e.target.files[0]);
+                video &&
+                  toast({
+                    description: 'Video added',
+                    status: 'success',
+                    duration: 4000,
+                    isClosable: true,
+                    position: 'top',
+                  });
+              }}
+              type="file"
+              ref={VideoInputRef}
+              accept="video/mp4,video/x-m4v,video/*"
               cursor="pointer"
-              pointerEvents="none"
-              icon={<MdPermMedia />}
+              display="none"
             />
+            <Input
+              onChange={e => {
+                setFile(e.target.files[0]);
+                file &&
+                  toast({
+                    description: 'File added',
+                    status: 'success',
+                    duration: 4000,
+                    isClosable: true,
+                    position: 'top',
+                  });
+              }}
+              type="file"
+              ref={FileInputRef}
+              accept="application/pdf,application/vnd.ms-excel"
+              cursor="pointer"
+              display="none"
+            />
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                colorScheme="blue"
+                aria-label="Options"
+                icon={<MdAttachFile />}
+                variant="ghost"
+                transition="all 0.2s"
+              />
+              <MenuList>
+                <MenuItem
+                  icon={<MdPermMedia />}
+                  onClick={() => ImageInputRef.current.click()}
+                >
+                  Send Image
+                </MenuItem>
+                <MenuItem
+                  icon={<MdVideoLibrary />}
+                  onClick={() => VideoInputRef.current.click()}
+                >
+                  Send Video
+                </MenuItem>
+                <MenuItem
+                  icon={<MdFileUpload />}
+                  onClick={() => FileInputRef.current.click()}
+                >
+                  Send Pdf
+                </MenuItem>
+              </MenuList>
+            </Menu>
+
             <IconButton
               colorScheme="blue"
               aria-label="Send message"
