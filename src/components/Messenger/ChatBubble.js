@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import Moment from 'react-moment';
 import { VStack, Box, Text, useColorModeValue, Image } from '@chakra-ui/react';
-import ReactAudioPlayer from 'react-audio-player';
 import { auth } from '../../firebase/Firebase';
+import ReactPlayer from 'react-player';
 
 const ChatBubble = ({ message }) => {
   const isMe = message.from === auth.currentUser.uid;
@@ -34,19 +34,32 @@ const ChatBubble = ({ message }) => {
         borderBottomRightRadius={message.media ? 5 : bottomRightRadius}
       >
         {isImage && isImage ? (
-          <Image src={message.media} alt={message.text} />
+          <Image
+            height="380px"
+            style={{ objectFit: 'cover' }}
+            src={message.media}
+            alt={message.text}
+          />
         ) : null}
         {isFile && isFile ? (
           <object
             width="100%"
-            height="400"
+            height="380"
             data={message.media}
             type="application/pdf"
           >
             {''}
           </object>
         ) : null}
-        {isVideo && isVideo ? <video src={message.media} /> : null}
+        {isVideo && isVideo ? (
+          <ReactPlayer
+            width="100%"
+            height="380"
+            url={message.media}
+            type="video/mp4"
+            controls
+          />
+        ) : null}
 
         {message.text}
       </Box>

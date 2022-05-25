@@ -50,7 +50,6 @@ const Home = () => {
   const [img, setImg] = useState('');
   const [video, setVideo] = useState('');
   const [file, setFile] = useState('');
-  const [audio, setAudio] = useState('');
 
   //profile page states
   const [profileData, setProfileData] = useState('');
@@ -136,7 +135,6 @@ const Home = () => {
 
   useEffect(() => {
     //  ---- profile page code ---
-
     if (profileImg) {
       // Upload file and metadata to the object
       const uploadImg = async () => {
@@ -253,7 +251,10 @@ const Home = () => {
         storage,
         `videos/${new Date().getTime()} - ${video.name}`
       );
-      const snap = await uploadBytes(videoRef, video);
+      const metadata = {
+        contentType: 'video/mp4',
+      };
+      const snap = await uploadBytes(videoRef, video, metadata);
       const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
       url = dlUrl;
     }
@@ -292,7 +293,6 @@ const Home = () => {
     setText('');
     setVideo('');
     setFile('');
-    // setAudio('');
     setImg('');
   };
 
@@ -332,7 +332,6 @@ const Home = () => {
             video={video}
             setFile={setFile}
             file={file}
-            setAudio={setAudio}
             isUploading2={isUploading2}
             messages={messages}
           />

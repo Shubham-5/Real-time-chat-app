@@ -44,8 +44,6 @@ import {
   MdAdd,
 } from 'react-icons/md';
 import { MdFileUpload } from 'react-icons/md';
-
-import AudioReactRecorder, { RecordState } from 'audio-react-recorder';
 import ChatBubble from './ChatBubble';
 
 import FriendProfile from '../FriendProfile';
@@ -81,10 +79,9 @@ const Chat = ({
   const toast = useToast();
   const [search, setSearch] = useState('');
   const [friends, setFriends] = useState([]);
-  const [friendsLength, setFriendsLength] = useState();
+  const [friendsLength, setFriendsLength] = useState('');
   const [viewProfileFriend, setViewProfileFriend] = useState('');
   const [isLoading, setLoading] = useState(false);
-  // const [audioState, setAudioState] = useState({ recordState: null });
 
   useEffect(() => {
     // setting my friends length to user field
@@ -161,24 +158,6 @@ const Chat = ({
     }
     setLoading(false);
   }, [myFriends, viewProfileFriend.uid]);
-
-  // const start = () => {
-  //   setAudioState({
-  //     recordState: RecordState.START,
-  //   });
-  // };
-
-  // const stop = () => {
-  //   setAudioState({
-  //     recordState: RecordState.STOP,
-  //   });
-  // };
-
-  // //audioData contains blob and blobUrl
-  // const onStop = async audioData => {
-  //   setAudio(audioData);
-  //   console.log(audioData);
-  // };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
@@ -314,44 +293,12 @@ const Chat = ({
                 <ChatBubble key={index} message={message} />
               ))
             : null}
-
-          {/* <Box
-            position="absolute"
-            zIndex="100"
-            bottom="10%"
-            right={{ base: '85%', md: '89%', lg: '89%' }}
-            opacity={audioState.recordState === 'start' ? '1' : '0'}
-          >
-            <AudioReactRecorder
-              state={audioState.recordState}
-              onStop={onStop}
-              canvasWidth="50"
-              canvasHeight="20"
-            />
-          </Box> */}
         </Flex>
       )}
 
       {!search && (
         <form onSubmit={handleSubmit}>
           <Flex pl={4} pr={2} py={2} borderTopWidth={1}>
-            {/* {audioState.recordState === null ||
-            audioState.recordState === 'stop' ? (
-              <IconButton
-                onClick={start}
-                colorScheme="blue"
-                variant="ghost"
-                icon={<MdMic />}
-              />
-            ) : (
-              <IconButton
-                onClick={stop}
-                colorScheme="blue"
-                variant="ghost"
-                icon={<MdMicOff />}
-              />
-            )} */}
-
             <Input
               variant="unstyled"
               placeholder="Type your message"
@@ -364,14 +311,13 @@ const Chat = ({
             <Input
               onChange={e => {
                 setImg(e.target.files[0]);
-                img &&
-                  toast({
-                    description: 'Image added',
-                    status: 'success',
-                    duration: 4000,
-                    isClosable: true,
-                    position: 'top',
-                  });
+                toast({
+                  description: 'Image added',
+                  status: 'success',
+                  duration: 4000,
+                  isClosable: true,
+                  position: 'top',
+                });
               }}
               type="file"
               id="img"
@@ -383,16 +329,16 @@ const Chat = ({
             <Input
               onChange={e => {
                 setVideo(e.target.files[0]);
-                video &&
-                  toast({
-                    description: 'Video added',
-                    status: 'success',
-                    duration: 4000,
-                    isClosable: true,
-                    position: 'top',
-                  });
+                toast({
+                  description: 'Video added',
+                  status: 'success',
+                  duration: 4000,
+                  isClosable: true,
+                  position: 'top',
+                });
               }}
               type="file"
+              id="video"
               ref={VideoInputRef}
               accept="video/mp4,video/x-m4v,video/*"
               cursor="pointer"
@@ -401,14 +347,13 @@ const Chat = ({
             <Input
               onChange={e => {
                 setFile(e.target.files[0]);
-                file &&
-                  toast({
-                    description: 'File added',
-                    status: 'success',
-                    duration: 4000,
-                    isClosable: true,
-                    position: 'top',
-                  });
+                toast({
+                  description: 'File added',
+                  status: 'success',
+                  duration: 4000,
+                  isClosable: true,
+                  position: 'top',
+                });
               }}
               type="file"
               ref={FileInputRef}
