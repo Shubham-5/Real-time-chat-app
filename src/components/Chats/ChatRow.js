@@ -5,9 +5,9 @@ import { onSnapshot, doc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
 import Moment from 'react-moment';
 
-const ChatRow = ({ selectFriend, friend, onClose }) => {
+const ChatRow = ({ selectFriend, friend, onClose, group, isGroup }) => {
   const isMe = auth.currentUser.uid;
-  const isFrom = friend?.friends.uid;
+  const isFrom = friend?.uid;
   const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
   const [unreadData, setUnreadData] = useState('');
   useEffect(() => {
@@ -28,7 +28,7 @@ const ChatRow = ({ selectFriend, friend, onClose }) => {
       _hover={{ opacity: '0.9', cursor: 'pointer' }}
       onClick={() => selectFriend(friend)}
     >
-      <UserAvatar name={friend.friends.name} friend={friend} />
+      <UserAvatar name={friend.name} friend={friend} isGroup={isGroup} />
       <VStack
         overflow="hidden"
         flex={1}
@@ -38,7 +38,7 @@ const ChatRow = ({ selectFriend, friend, onClose }) => {
         onClick={onClose}
       >
         <Heading fontSize={12} w="full">
-          {friend.friends.name}
+          {friend.name}
         </Heading>
 
         <Text

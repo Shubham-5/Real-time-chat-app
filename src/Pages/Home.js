@@ -47,6 +47,9 @@ const Home = () => {
   const [chat, setChat] = useState('');
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
+  const [groupMessages, setGroupMessages] = useState([]);
+  const [groupChat, setGroupChat] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [img, setImg] = useState('');
   const [video, setVideo] = useState('');
   const [file, setFile] = useState('');
@@ -60,7 +63,7 @@ const Home = () => {
 
   //current user id
   const isMe = auth.currentUser.uid;
-  console.log('video :', video, 'img :', img, 'pdf :', file);
+
   useEffect(() => {
     //profile data of user
     getDoc(doc(db, 'users', isMe)).then(docSnap => {
@@ -68,17 +71,34 @@ const Home = () => {
         setProfileData(docSnap.data());
       }
     });
-
-    //chat row component code for getting friends  ----
+    //get groups
+    const groupsRef = collection(db, 'groups');
+    //chat row component for getting friends  ----
     const myFriendsRef = collection(db, 'users', isMe, 'friends');
     const userRef = collection(db, 'users');
     //query object
-    // const queryForMyFriends = query(userRef, where('uid', 'in', [isMe]));
     const queryForOnlineFriends = query(
       userRef,
       where('uid', 'not-in', [isMe])
     );
+    const queryForGroups = query(
+      groupsRef,
+      where('membersID', 'array-contains', isMe)
+    );
     //execute query
+    const setGroupsHandler = onSnapshot(queryForGroups, querySnap => {
+      let myGroups = [];
+      querySnap.forEach(doc => {
+        myGroups.push(doc.data());
+      });
+
+      setGroups(myGroups);
+      return () => {
+        setGroupsHandler();
+      };
+    });
+
+    console.log(groups);
     const setMyFriendsHandler = onSnapshot(myFriendsRef, querySnap => {
       let users = [];
       querySnap.forEach(doc => {
@@ -198,12 +218,31 @@ const Home = () => {
     }
   };
 
+  const selectGroups = async group => {
+    let id = group.id;
+    setChat('');
+    setMessages('');
+    setGroupChat(group);
+    // get messages from selected group in asc order
+    const msgsRef = collection(db, 'groups', id, 'chat');
+    const q = query(msgsRef, orderBy('dateSent', 'asc'));
+    onSnapshot(q, querySnapshot => {
+      let msgs = [];
+      querySnapshot.forEach(doc => {
+        msgs.push(doc.data());
+      });
+      setGroupMessages(msgs);
+    });
+  };
+
   //chat -- chathistory component code -------
 
   const selectFriend = async friend => {
+    setGroupChat('');
+    setGroupMessages('');
     setChat(friend);
 
-    const isFrom = friend.friends.uid;
+    const isFrom = friend.uid;
     const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
     // get messages from selected user in asc order
@@ -228,67 +267,124 @@ const Home = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    //selected friend id
-    const isFrom = chat.friends.uid;
-    //document id
-    const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
-    // sending images || videos || file
-    let url;
-    setIsUploading2(true);
+    // if group chat selected then this code execute
+    if (groupChat) {
+      //document id
+      const grpId = groupChat.id;
 
-    if (img) {
-      const imgRef = ref(
-        storage,
-        `images/${new Date().getTime()} - ${img.name}`
-      );
-      const snap = await uploadBytes(imgRef, img);
-      const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
-      url = dlUrl;
+      // sending images || videos || file
+      let url;
+      setIsUploading2(true);
+
+      if (img) {
+        const imgRef = ref(
+          storage,
+          `images/${new Date().getTime()} - ${img.name}`
+        );
+        const snap = await uploadBytes(imgRef, img);
+        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+        url = dlUrl;
+      }
+      if (video) {
+        const videoRef = ref(
+          storage,
+          `videos/${new Date().getTime()} - ${video.name}`
+        );
+        const metadata = {
+          contentType: 'video/mp4',
+        };
+        const snap = await uploadBytes(videoRef, video, metadata);
+        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+        url = dlUrl;
+      }
+      if (file) {
+        const fileRef = ref(
+          storage,
+          `files/${new Date().getTime()} - ${file.name}`
+        );
+        const snap = await uploadBytes(fileRef, file);
+        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+        url = dlUrl;
+      }
+
+      setIsUploading2(false);
+
+      // adding messages to firestore
+      if (text || img || video || file) {
+        await addDoc(collection(db, 'groups', grpId, 'chat'), {
+          text,
+          from: isMe,
+          to: grpId,
+          dateSent: Timestamp.fromDate(new Date()),
+          media: url || '',
+        });
+      }
     }
-    if (video) {
-      const videoRef = ref(
-        storage,
-        `videos/${new Date().getTime()} - ${video.name}`
-      );
-      const metadata = {
-        contentType: 'video/mp4',
-      };
-      const snap = await uploadBytes(videoRef, video, metadata);
-      const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
-      url = dlUrl;
-    }
-    if (file) {
-      const fileRef = ref(
-        storage,
-        `files/${new Date().getTime()} - ${file.name}`
-      );
-      const snap = await uploadBytes(fileRef, file);
-      const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
-      url = dlUrl;
-    }
 
-    setIsUploading2(false);
+    // if friend chat selected then this code execute
+    if (chat) {
+      const isFrom = chat.uid;
+      //document id
+      const id = isMe > isFrom ? `${isMe + isFrom}` : `${isFrom + isMe}`;
 
-    // adding messages to firestore
-    if (text || img || video || file) {
-      await addDoc(collection(db, 'messages', id, 'chat'), {
-        text,
-        from: isMe,
-        to: isFrom,
-        dateSent: Timestamp.fromDate(new Date()),
-        media: url || '',
-      });
-      // adding last msg
-      await setDoc(doc(db, 'lastMsg', id), {
-        text,
-        from: isMe,
-        to: isFrom,
-        dateSent: Timestamp.fromDate(new Date()),
-        media: url || '',
+      // sending images || videos || file
+      let url;
+      setIsUploading2(true);
 
-        unread: true,
-      });
+      if (img) {
+        const imgRef = ref(
+          storage,
+          `images/${new Date().getTime()} - ${img.name}`
+        );
+        const snap = await uploadBytes(imgRef, img);
+        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+        url = dlUrl;
+      }
+      if (video) {
+        const videoRef = ref(
+          storage,
+          `videos/${new Date().getTime()} - ${video.name}`
+        );
+        const metadata = {
+          contentType: 'video/mp4',
+        };
+        const snap = await uploadBytes(videoRef, video, metadata);
+        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+        url = dlUrl;
+      }
+      if (file) {
+        const fileRef = ref(
+          storage,
+          `files/${new Date().getTime()} - ${file.name}`
+        );
+        const snap = await uploadBytes(fileRef, file);
+        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+        url = dlUrl;
+      }
+
+      setIsUploading2(false);
+
+      // adding messages to firestore
+      if (text || img || video || file) {
+        await addDoc(collection(db, 'messages', id, 'chat'), {
+          text,
+          from: isMe,
+          to: isFrom,
+          dateSent: Timestamp.fromDate(new Date()),
+          media: url || '',
+        });
+        // adding last msg
+        await setDoc(doc(db, 'lastMsg', id), {
+          text,
+          from: isMe,
+          to: isFrom,
+          dateSent: Timestamp.fromDate(new Date()),
+          media: url || '',
+
+          unread: true,
+        });
+      }
     }
     setText('');
     setVideo('');
@@ -311,14 +407,20 @@ const Home = () => {
           <ChatHistorySidebar
             onlineFriends={onlineFriends}
             myFriends={myFriends}
+            profileData={profileData}
+            groups={groups}
+            selectGroups={selectGroups}
             selectFriend={selectFriend}
           />
         </Flex>
         <Flex as="main" h="full" flex={1} borderRightWidth={1}>
           <Chat
+            profileData={profileData}
             onChatHistoryOpen={onChatHistoryOpen}
             onChatFilesOpen={onChatFilesOpen}
             chat={chat}
+            groupChat={groupChat}
+            groupMessages={groupMessages}
             selectFriend={selectFriend}
             myFriends={myFriends}
             onlineFriends={onlineFriends}
@@ -361,6 +463,9 @@ const Home = () => {
           onlineFriends={onlineFriends}
           selectFriend={selectFriend}
           myFriends={myFriends}
+          groups={groups}
+          selectGroups={selectGroups}
+          profileData={profileData}
         />
         <ChatFilesDrawer
           isMe={isMe}

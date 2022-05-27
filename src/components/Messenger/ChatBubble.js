@@ -4,7 +4,7 @@ import { VStack, Box, Text, useColorModeValue, Image } from '@chakra-ui/react';
 import { auth } from '../../firebase/Firebase';
 import ReactPlayer from 'react-player';
 
-const ChatBubble = ({ message }) => {
+const ChatBubble = ({ message, profileData }) => {
   const isMe = message.from === auth.currentUser.uid;
   const alignment = isMe ? 'flex-end' : 'flex-start';
   const bottomRightRadius = isMe ? 0 : 32;
@@ -63,9 +63,13 @@ const ChatBubble = ({ message }) => {
 
         {message.text}
       </Box>
-      <Text fontSize="xs" color="gray">
-        <Moment fromNow>{message.dateSent.toDate()}</Moment>
+      <Text fontSize="xs" color="gray" textAlign="end">
+        {profileData && profileData.name}{' '}
+        <Text fontSize="xs" color="gray">
+          <Moment fromNow>{message.dateSent.toDate()}</Moment>
+        </Text>
       </Text>
+
       <Text ref={scrollRef}></Text>
     </VStack>
   );

@@ -12,12 +12,16 @@ import {
 } from '@chakra-ui/react';
 
 import ChatRow from './ChatRow';
+import CreateGroup from './CreateGroup';
 
 const ChatHistorySidebar = ({
   onlineFriends,
   selectFriend,
   onClose,
   myFriends,
+  groups,
+  selectGroups,
+  profileData,
 }) => {
   const bgColor = useColorModeValue('', 'gray.800');
 
@@ -33,6 +37,37 @@ const ChatHistorySidebar = ({
       <Box px={8} w="full">
         <Divider color={bgColor} />
       </Box>
+      <Box
+        px={8}
+        w="full"
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Heading size="xs" w="full">
+          Groups
+        </Heading>
+        <Heading size="xs" w="full">
+          <CreateGroup myFriends={myFriends} profileData={profileData} />
+        </Heading>
+      </Box>
+      <Box w="full">
+        <List w="full" spacing={0} overflowY="auto">
+          <ListItem>
+            {groups &&
+              groups.map(group => (
+                <ChatRow
+                  friend={group}
+                  selectFriend={selectGroups}
+                  key={group.id}
+                  isGroup={true}
+                  onClose={onClose}
+                />
+              ))}
+          </ListItem>
+        </List>
+      </Box>
+
       <Box px={8} w="full">
         <Heading size="xs" w="full">
           Chats
@@ -44,10 +79,11 @@ const ChatHistorySidebar = ({
             {myFriends &&
               myFriends.map(friend => (
                 <ChatRow
-                  friend={friend}
+                  friend={friend.friends}
                   selectFriend={selectFriend}
-                  key={friend.uid}
+                  key={friend.friends.uid}
                   onClose={onClose}
+                  isGroup={false}
                 />
               ))}
           </ListItem>

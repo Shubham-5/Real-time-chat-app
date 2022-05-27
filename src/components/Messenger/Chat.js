@@ -57,12 +57,14 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
 const Chat = ({
+  profileData,
   onChatHistoryOpen,
   onChatFilesOpen,
   onlineFriends,
-  selectFriend,
   myFriends,
   chat,
+  groupChat,
+  groupMessages,
   setText,
   text,
   handleSubmit,
@@ -74,7 +76,6 @@ const Chat = ({
   setVideo,
   video,
   isUploading2,
-  setAudio,
 }) => {
   const toast = useToast();
   const [search, setSearch] = useState('');
@@ -282,15 +283,23 @@ const Chat = ({
           <Stat mt={6}>
             <StatLabel color="gray.500">Chatting with</StatLabel>
             <StatNumber>
-              {chat
-                ? chat.friends.name
-                : 'select a friend to start conversation'}
+              {chat && chat.name}
+              {groupChat && groupChat.name}
             </StatNumber>
           </Stat>
 
           {messages.length
             ? messages.map((message, index) => (
                 <ChatBubble key={index} message={message} />
+              ))
+            : null}
+          {groupMessages.length
+            ? groupMessages.map((message, index) => (
+                <ChatBubble
+                  key={index}
+                  message={message}
+                  profileData={profileData}
+                />
               ))
             : null}
         </Flex>
@@ -303,9 +312,8 @@ const Chat = ({
               variant="unstyled"
               placeholder="Type your message"
               value={text}
-              isDisabled={!chat}
+              // isDisabled={!chat || !groupChat}
               onChange={e => setText(e.target.value)}
-              Submit={handleSubmit}
             />
 
             <Input
