@@ -27,16 +27,6 @@ const ChatHistorySidebar = ({
 
   return (
     <VStack h="full" alignItems="center" w="full" mt="20px" spacing={6}>
-      <HStack px={8} w="full" justifyContent="space-between">
-        <Heading size="xs">Friends</Heading>
-        <Text fontSize="sm" color="gray.500" fontWeight="semibold">
-          {myFriends.length}
-        </Text>
-      </HStack>
-
-      <Box px={8} w="full">
-        <Divider color={bgColor} />
-      </Box>
       <Box
         px={8}
         w="full"
@@ -47,12 +37,11 @@ const ChatHistorySidebar = ({
         <Heading size="xs" w="full">
           Groups
         </Heading>
-        <Heading size="xs" w="full">
-          <CreateGroup myFriends={myFriends} profileData={profileData} />
-        </Heading>
+
+        <CreateGroup myFriends={myFriends} profileData={profileData} />
       </Box>
       <Box w="full">
-        <List w="full" spacing={0} overflowY="auto">
+        <List w="full" spacing={0} height="200px" overflowY="auto">
           <ListItem>
             {groups &&
               groups.map(group => (

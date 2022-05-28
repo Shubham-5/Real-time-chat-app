@@ -39,7 +39,7 @@ const CreateGroup = ({ myFriends, profileData }) => {
       profileData && setMembersID(prev => [...prev, auth.currentUser.uid]);
     }
   }, [profileData]);
-  console.log(membersID);
+
   const handleChange = (e, data) => {
     const check = e.target.checked;
     if (check) {
@@ -79,12 +79,7 @@ const CreateGroup = ({ myFriends, profileData }) => {
   };
   return (
     <>
-      <Button
-        leftIcon={<MdAdd />}
-        colorScheme="telegram"
-        variant="ghost"
-        onClick={onOpen}
-      >
+      <Button leftIcon={<MdAdd />} variant="ghost" size="sm" onClick={onOpen}>
         Create Group
       </Button>
       <Drawer

@@ -98,7 +98,6 @@ const Home = () => {
       };
     });
 
-    console.log(groups);
     const setMyFriendsHandler = onSnapshot(myFriendsRef, querySnap => {
       let users = [];
       querySnap.forEach(doc => {

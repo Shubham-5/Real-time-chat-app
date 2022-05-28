@@ -123,7 +123,7 @@ const ChatFiles = ({
         ></IconButton>
       </Heading>
 
-      <VStack overflowY="auto" mt="2rem" w="full">
+      <VStack mt="50px" w="full">
         <HStack px={8} w="full" justifyContent="space-between">
           <Box variant="outline" size="sm" onClick={toggleColorMode}>
             {darkIcon ? 'Dark' : 'Light'}

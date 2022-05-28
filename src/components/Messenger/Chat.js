@@ -86,6 +86,7 @@ const Chat = ({
 
   useEffect(() => {
     // setting my friends length to user field
+
     const setLengthHandler = async () => {
       if (myFriends.length > 0) {
         setFriendsLength(myFriends.length);
@@ -290,7 +291,7 @@ const Chat = ({
 
           {messages.length
             ? messages.map((message, index) => (
-                <ChatBubble key={index} message={message} />
+                <ChatBubble key={index} message={message} isGroup={false} />
               ))
             : null}
           {groupMessages.length
@@ -298,7 +299,12 @@ const Chat = ({
                 <ChatBubble
                   key={index}
                   message={message}
+                  isGroup={true}
                   profileData={profileData}
+                  groupChat={groupChat}
+                  notMe={groupChat.members.filter(
+                    friend => friend.uid === message.from
+                  )}
                 />
               ))
             : null}
@@ -312,7 +318,6 @@ const Chat = ({
               variant="unstyled"
               placeholder="Type your message"
               value={text}
-              // isDisabled={!chat || !groupChat}
               onChange={e => setText(e.target.value)}
             />
 
