@@ -111,7 +111,7 @@ const Chat = ({
     if (search) {
       if (event.key === 'Enter') {
         const filterFriends = onlineFriends.filter(data =>
-          data.name.toLowerCase().includes(search)
+          data.name.toLowerCase().includes(search.toLocaleLowerCase())
         );
         setFriends(filterFriends);
       }
