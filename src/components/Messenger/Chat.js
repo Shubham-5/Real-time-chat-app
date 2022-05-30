@@ -169,28 +169,43 @@ const Chat = ({
   }, [myFriends, viewProfileFriend.uid]);
 
   const groupDeleteHandler = async () => {
-    try {
-      const grpRef = collection(db, 'groups');
-      const queryForGroups = query(grpRef, where('id', '==', groupChat.id));
-      const snapshot = await getDocs(queryForGroups);
-      const result = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    const isAdmin = groupChat.createdBy === auth.currentUser.uid;
 
-      result.forEach(async result => {
-        const docRef = doc(db, 'groups', result.id);
-        await deleteDoc(docRef);
-      });
+    if (isAdmin) {
+      try {
+        const grpRef = collection(db, 'groups');
+        const queryForGroups = query(grpRef, where('id', '==', groupChat.id));
+        const snapshot = await getDocs(queryForGroups);
+        const result = snapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
 
+        result.forEach(async result => {
+          const docRef = doc(db, 'groups', result.id);
+          await deleteDoc(docRef);
+        });
+
+        toast({
+          description: 'Group deleted',
+          status: 'success',
+          duration: 4000,
+          isClosable: true,
+          position: 'top',
+        });
+        setGroupChat('');
+        setGroupMessages('');
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
       toast({
-        description: 'Group deleted',
+        description: `Your not a admin of this group`,
         status: 'success',
-        duration: 4000,
+        duration: 3000,
         isClosable: true,
         position: 'top',
       });
-      setGroupChat('');
-      setGroupMessages('');
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -317,12 +332,12 @@ const Chat = ({
         <Flex px={6} overflowY="auto" flexDirection="column" flex={1}>
           <Stat mt={3} justifyContent="center" alignItems="center">
             <StatLabel color="gray.500">
-              {groupChat || chat
+              {groupChat.name || chat
                 ? 'Chatting with'
                 : 'select a chat to start conversation'}
             </StatLabel>
             <StatNumber>{chat && chat.name}</StatNumber>
-            {groupChat && (
+            {groupChat.name && (
               <Menu>
                 <MenuButton
                   as={Button}
