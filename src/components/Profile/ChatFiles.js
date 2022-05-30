@@ -125,7 +125,14 @@ const ChatFiles = ({
 
       <VStack mt="50px" w="full">
         <HStack px={8} w="full" justifyContent="space-between">
-          <Box variant="outline" size="sm" onClick={toggleColorMode}>
+          <Box
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              handleDark();
+              toggleColorMode();
+            }}
+          >
             {darkIcon ? 'Dark' : 'Light'}
             <IconButton
               size="sm"
@@ -133,7 +140,7 @@ const ChatFiles = ({
               variant="ghost"
               icon={!darkIcon ? <FaSun /> : <FaMoon />}
               aria-label="darkmode"
-              onClick={handleDark}
+              // onClick={handleDark}
             />
           </Box>
           <Button variant="outline" size="sm" onClick={handleSignOut}>

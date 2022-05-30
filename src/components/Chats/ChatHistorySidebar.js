@@ -23,8 +23,6 @@ const ChatHistorySidebar = ({
   selectGroups,
   profileData,
 }) => {
-  const bgColor = useColorModeValue('', 'gray.800');
-
   return (
     <VStack h="full" alignItems="center" w="full" mt="20px" spacing={6}>
       <Box
@@ -41,7 +39,7 @@ const ChatHistorySidebar = ({
         <CreateGroup myFriends={myFriends} profileData={profileData} />
       </Box>
       <Box w="full">
-        <List w="full" spacing={0} height="200px" overflowY="auto">
+        <List w="full" spacing={0} maxHeight="200px" overflowY="auto">
           <ListItem>
             {groups &&
               groups.map(group => (

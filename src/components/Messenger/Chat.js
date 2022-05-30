@@ -26,6 +26,7 @@ import {
   MenuList,
   MenuButton,
   Menu,
+  Image,
 } from '@chakra-ui/react';
 
 import { HiChat } from 'react-icons/hi';
@@ -43,16 +44,20 @@ import {
   MdVisibility,
   MdAdd,
 } from 'react-icons/md';
-import { MdFileUpload } from 'react-icons/md';
+import { MdFileUpload, MdViewStream } from 'react-icons/md';
 import ChatBubble from './ChatBubble';
 
 import FriendProfile from '../FriendProfile';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   setDoc,
+  getDocs,
+  where,
+  query,
   updateDoc,
 } from 'firebase/firestore';
 import { auth, db } from '../../firebase/Firebase';
@@ -64,7 +69,9 @@ const Chat = ({
   myFriends,
   chat,
   groupChat,
+  setGroupChat,
   groupMessages,
+  setGroupMessages,
   setText,
   text,
   handleSubmit,
@@ -161,12 +168,39 @@ const Chat = ({
     setLoading(false);
   }, [myFriends, viewProfileFriend.uid]);
 
+  const groupDeleteHandler = async () => {
+    try {
+      const grpRef = collection(db, 'groups');
+      const queryForGroups = query(grpRef, where('id', '==', groupChat.id));
+      const snapshot = await getDocs(queryForGroups);
+      const result = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+
+      result.forEach(async result => {
+        const docRef = doc(db, 'groups', result.id);
+        await deleteDoc(docRef);
+      });
+
+      toast({
+        description: 'Group deleted',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+      });
+      setGroupChat('');
+      setGroupMessages('');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
   const ImageInputRef = React.useRef(null);
   const VideoInputRef = React.useRef(null);
   const FileInputRef = React.useRef(null);
   const bgColor = useColorModeValue('', 'gray.800');
+  const bgColor1 = useColorModeValue('gray.100', 'blue.300');
 
   return (
     <Flex w="full" flexDirection="column" bg={bgColor} position="relative">
@@ -265,7 +299,7 @@ const Chat = ({
       >
         <DrawerOverlay />
         <DrawerContent>
-          {/* <DrawerCloseButton /> */}
+          <DrawerCloseButton />
           <DrawerBody>
             <Flex h="full" flexDirection="column" alignItems="center" w="full">
               <FriendProfile
@@ -281,12 +315,48 @@ const Chat = ({
       {/* chats */}
       {!search && (
         <Flex px={6} overflowY="auto" flexDirection="column" flex={1}>
-          <Stat mt={6}>
-            <StatLabel color="gray.500">Chatting with</StatLabel>
-            <StatNumber>
-              {chat && chat.name}
-              {groupChat && groupChat.name}
-            </StatNumber>
+          <Stat mt={3} justifyContent="center" alignItems="center">
+            <StatLabel color="gray.500">
+              {groupChat || chat
+                ? 'Chatting with'
+                : 'select a chat to start conversation'}
+            </StatLabel>
+            <StatNumber>{chat && chat.name}</StatNumber>
+            {groupChat && (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rightIcon={<MdViewStream />}
+                  variant="ghost"
+                  onClick={() => console.log(groupChat.id)}
+                >
+                  {groupChat && groupChat.name}
+                </MenuButton>
+                <MenuList>
+                  {groupChat.members &&
+                    groupChat.members.map(member => (
+                      <MenuItem minH="48px">
+                        <Avatar
+                          boxSize="2rem"
+                          borderRadius="full"
+                          src={member.avatar}
+                          name={member.name}
+                          mr="12px"
+                        />
+                        <span>{member.name}</span>
+                      </MenuItem>
+                    ))}
+                  <Button
+                    width="full"
+                    bg=""
+                    _focus={{ backgroundColor: '' }}
+                    onClick={groupDeleteHandler}
+                  >
+                    Delete group
+                  </Button>
+                </MenuList>
+              </Menu>
+            )}
           </Stat>
 
           {messages.length
@@ -302,9 +372,12 @@ const Chat = ({
                   isGroup={true}
                   profileData={profileData}
                   groupChat={groupChat}
-                  notMe={groupChat.members.filter(
-                    friend => friend.uid === message.from
-                  )}
+                  notMe={
+                    groupChat &&
+                    groupChat.members.filter(
+                      friend => friend.uid === message.from
+                    )
+                  }
                 />
               ))
             : null}

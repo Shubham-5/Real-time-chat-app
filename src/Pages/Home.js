@@ -419,7 +419,9 @@ const Home = () => {
             onChatFilesOpen={onChatFilesOpen}
             chat={chat}
             groupChat={groupChat}
+            setGroupChat={setGroupChat}
             groupMessages={groupMessages}
+            setGroupMessages={setGroupMessages}
             selectFriend={selectFriend}
             myFriends={myFriends}
             onlineFriends={onlineFriends}

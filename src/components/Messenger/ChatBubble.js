@@ -66,7 +66,7 @@ const ChatBubble = ({ message, profileData, groupChat, isGroup, notMe }) => {
       </Box>
       <Text fontSize="xs" color="gray" textAlign="end">
         {isGroup && isMe && profileData.name}
-        {isGroup && notMe.map(friend => friend.name)}{' '}
+        {isGroup && notMe && notMe.map(friend => friend.name)}{' '}
         <Text fontSize="xs" color="gray">
           <Moment fromNow>{message.dateSent.toDate()}</Moment>
         </Text>
