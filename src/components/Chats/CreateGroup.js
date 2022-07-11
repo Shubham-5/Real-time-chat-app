@@ -51,7 +51,6 @@ const CreateGroup = ({ myFriends, profileData }) => {
   const handleSubmit = async () => {
     setLoading(true);
     let id = uuid();
-
     try {
       await addDoc(collection(db, 'groups'), {
         name: groupName,
@@ -101,6 +100,7 @@ const CreateGroup = ({ myFriends, profileData }) => {
                 <FormLabel htmlFor="name">Name</FormLabel>
                 <Input
                   ref={firstField}
+                  isRequired
                   onChange={e => setGroupName(e.target.value)}
                   id="name"
                   placeholder="Please enter group name"
@@ -132,13 +132,15 @@ const CreateGroup = ({ myFriends, profileData }) => {
             <Button variant="outline" mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              colorScheme="blue"
-              onClick={handleSubmit}
-              isLoading={isLoading}
-            >
-              Submit
-            </Button>
+            {groupName && (
+              <Button
+                colorScheme="blue"
+                onClick={handleSubmit}
+                isLoading={isLoading}
+              >
+                Submit
+              </Button>
+            )}
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

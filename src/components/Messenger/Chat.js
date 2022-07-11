@@ -53,8 +53,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  onSnapshot,
-  setDoc,
   getDocs,
   where,
   query,
@@ -488,7 +486,7 @@ const Chat = ({
                   icon={<MdFileUpload />}
                   onClick={() => FileInputRef.current.click()}
                 >
-                  Send Pdf
+                  Send Document
                 </MenuItem>
               </MenuList>
             </Menu>
